@@ -2,32 +2,32 @@
 
 `ChessBoard` class implements the following functions:
 
-- `resetBoard()`: makes a new game; rest the fields of the engine and insert appropriate pieces onto the board.
-- `submitMove(const TCHAR* fromSquare, const TCHAR* toSquare)`
-- `getANewBoard()`
-- `makeGameInCheck()`
-- `makeGameNotInCheck()`
-- `beginAGame()`
-- `endTheGame()`
-- `makeWhiteGoesNext()`
-- `gameCanContinue(wstring sourceFileRank, wstring destFileRank)`: checks if the game is not ended.
-- `sourceAndDestIsValid(wstring sourceFileRank, wstring destFileRank)`: check if given source and dest's file and rank represenation is valid (wstring with 2 chars) and are within chess board.
-- `withinChessBoard(wstring fileRank)`: checks if file is in range 'A'-'H', rank is in range '1'-'8'.
-- `sourceIsNotEmpty(wstring sourceFileRank, Board* board)`: checks if source is not an empty square (i.e. there is a piece to move).
-- `isCurrentPlayerPiece(bool isWhiteTurn, Piece* piece, wstring sourceFileRank)`: checks if the piece at source belongs to the player in turn.
-- `pieceMoveIsValid(int returnCode, Piece* piece, wstring sourceFileRank, wstring destFileRank)`: checks if the return code for validating piece move is zero.
-- `pieceMoveKeepsKingSafe(bool isWhiteTurn, Piece* piece, wstring sourceFileRank, wstring destFileRank, Board* sandboxBoard)`: checks if given side's King is safe under the given board (in ChessBoard it would be a sandbox), if not give out an error to user and return false.
-- `handleInvalidMove(int returnCode, Piece* piece, wstring sourceFileRank, wstring destFileRank)`: calls the error handler to print the error, passing the information given by the calling functions.
-- `kingIsSafeFromRivalry(bool isWhiteTurn, Board* board)`: returns true if none of the Pieces of the other side can capture the given side's King (i.e. has a valid move to the King's file and rank).
-- `playerHaveValidMove(bool isWhiteTurn, Board* board)`: returns true if the given side have a valid move on the given board.
-- `findPlayersKingFileRank(bool isWhiteTurn, Board* board)`: iterates and returns the location (file & rank) of the given side's King.
-- `tryMoveAndReturnCaptured(wstring sourceFileRank, wstring destFileRank, Board* board)`: Given a board, conducts move from source to destination & get the captured; Case 1 (try block) - Another piece in destination (conduct capture); Case 2 (catch block) - No piece exists in destination (conduct move). Return the piece if in case 1, NULL otherwise.
-- `confirmMoveOnBoard(wstring sourceFileRank, wstring destFileRank, Board* board)`: Given a board, conduct the move from source to destination; Case 1 (try block) - Another piece in destination (conduct capture); Case 2 (catch block) - No piece exists in destination (conduct move).
-- `switchPlayers()`
-- `cloneBoard(Board* board)`: deep clone the given board - including all the Piece within the map.
-- `deepCleanBoard(Board* board)`: deep clean the given board, free all containing Piece's memory and itself.
-- `showMoveAndCheckIfGameCanContinue(Piece* piece, wstring sourceFileRank, Piece* capturedPiece, wstring destFileRank, bool isWhiteTurn, Board* board)`: Printing methods, in both text and graphics, on stdout.
-- `ComputerPlayer()`: implements the Backtracking algorithm for computer's Black pieces move, if enabled.
+- `void resetBoard()`: makes a new game; rest the fields of the engine and insert appropriate pieces onto the board.
+- `void submitMove(const TCHAR* fromSquare, const TCHAR* toSquare)`
+- `void getANewBoard()`
+- `void makeGameInCheck()`
+- `void makeGameNotInCheck()`
+- `void beginAGame()`
+- `void endTheGame()`
+- `void makeWhiteGoesNext()`
+- `bool gameCanContinue(wstring sourceFileRank, wstring destFileRank)`: checks if the game is not ended.
+- `bool sourceAndDestIsValid(wstring sourceFileRank, wstring destFileRank)`: check if given source and dest's file and rank represenation is valid (wstring with 2 chars) and are within chess board.
+- `bool withinChessBoard(wstring fileRank)`: checks if file is in range 'A'-'H', rank is in range '1'-'8'.
+- `bool sourceIsNotEmpty(wstring sourceFileRank, Board* board)`: checks if source is not an empty square (i.e. there is a piece to move).
+- `bool isCurrentPlayerPiece(bool isWhiteTurn, Piece* piece, wstring sourceFileRank)`: checks if the piece at source belongs to the player in turn.
+- `bool pieceMoveIsValid(int returnCode, Piece* piece, wstring sourceFileRank, wstring destFileRank)`: checks if the return code for validating piece move is zero.
+- `bool pieceMoveKeepsKingSafe(bool isWhiteTurn, Piece* piece, wstring sourceFileRank, wstring destFileRank, Board* sandboxBoard)`: checks if given side's King is safe under the given board (in ChessBoard it would be a sandbox), if not give out an error to user and return false.
+- `void handleInvalidMove(int returnCode, Piece* piece, wstring sourceFileRank, wstring destFileRank)`: calls the error handler to print the error, passing the information given by the calling functions.
+- `bool kingIsSafeFromRivalry(bool isWhiteTurn, Board* board)`: returns true if none of the Pieces of the other side can capture the given side's King (i.e. has a valid move to the King's file and rank).
+- `bool playerHaveValidMove(bool isWhiteTurn, Board* board)`: returns true if the given side have a valid move on the given board.
+- `wstring findPlayersKingFileRank(bool isWhiteTurn, Board* board)`: iterates and returns the location (file & rank) of the given side's King.
+- `Piece* tryMoveAndReturnCaptured(wstring sourceFileRank, wstring destFileRank, Board* board)`: Given a board, conducts move from source to destination & get the captured; Case 1 (try block) - Another piece in destination (conduct capture); Case 2 (catch block) - No piece exists in destination (conduct move). Return the piece if in case 1, NULL otherwise.
+- `void confirmMoveOnBoard(wstring sourceFileRank, wstring destFileRank, Board* board)`: Given a board, conduct the move from source to destination; Case 1 (try block) - Another piece in destination (conduct capture); Case 2 (catch block) - No piece exists in destination (conduct move).
+- `void switchPlayers()`
+- `Board* cloneBoard(Board* board)`: deep clone the given board - including all the Piece within the map.
+- `void deepCleanBoard(Board* board)`: deep clean the given board, free all containing Piece's memory and itself.
+- `bool showMoveAndCheckIfGameCanContinue(Piece* piece, wstring sourceFileRank, Piece* capturedPiece, wstring destFileRank, bool isWhiteTurn, Board* board)`: Printing methods, in both text and graphics, on stdout.
+- `void ComputerPlayer()`: implements the Backtracking algorithm for computer's Black pieces move, if enabled.
 
 `ChessBoard` class includes the following classes:
 
@@ -41,28 +41,28 @@
 
 `Piece` class declares the follwing virtual functions:
 
-- `clone()`: returns a different object with same information of itself.
-- `isValidMove(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)`
-- `playerToString()`: return wstring rep. of the piece's player.
-- `toString()`: returns the wstring rep. of the piece.
-- `toGraphics()`: returns graphical rep. of the piece.
-- `Score()`: return the score of the piece (used by Backtracking algorithm to perform the computer move).
+- `Piece* clone()`: returns a different object with same information of itself.
+- `int isValidMove(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)`
+- `wstring playerToString()`: return wstring rep. of the piece's player.
+- `wstring toString()`: returns the wstring rep. of the piece.
+- `wstring toGraphics()`: returns graphical rep. of the piece.
+- `int Score()`: return the score of the piece (used by Backtracking algorithm to perform the computer move).
 
 And it implements the following functions:
 
-- `confirmMove()`: sets `isFirstMove` false when called as it has moved at least once.
-- `isWhitePlayer()`: returns if this piece belongs to White player.
-- `isKing()`: returns true if the piece is a King (represented by _isKing_ - only set to true by King constructor).
-- `isFriendly(Piece* that)`: returns true if this and that Piece belongs to same player.
-- `isSameFile(wstring sourceFileRank, wstring destFileRank)`: returns true if sourceFileRank and destFileRank is on the same file / rank / diagonal respectively; otherwise, false.
-- `isSameRank(wstring sourceFileRank, wstring destFileRank)`: returns true if sourceFileRank and destFileRank is on the same file / rank / diagonal respectively; otherwise, false.
-- `isSameDiagonal(wstring sourceFileRank, wstring destFileRank)`: returns true if sourceFileRank and destFileRank is on the same file / rank / diagonal respectively; otherwise, false.
-- `noVerticalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)`: returns true if there are no pieces on intermediate ranks on the board; otherwise, false.
-- `noHorizontalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)`: returns true iff there are no pieces on intermediate files on the board; otherwise, false.
-- `noDiagonalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)`: return true if there are no pieces on intermediate files and ranks, which is on the same diagonal, on the board; otherwise, false.
-- `destExistFriendlyPiece(wstring destFileRank, map<wstring, Piece*>* board)`: return true if there are no pieces on intermediate files and ranks, which is on the same diagonal, on the board; otherwise, false.
+- `void confirmMove()`: sets `isFirstMove` false when called as it has moved at least once.
+- `bool isWhitePlayer()`: returns if this piece belongs to White player.
+- `bool isKing()`: returns true if the piece is a King (represented by _isKing_ - only set to true by King constructor).
+- `bool isFriendly(Piece* that)`: returns true if this and that Piece belongs to same player.
+- `bool isSameFile(wstring sourceFileRank, wstring destFileRank)`: returns true if sourceFileRank and destFileRank is on the same file / rank / diagonal respectively; otherwise, false.
+- `bool isSameRank(wstring sourceFileRank, wstring destFileRank)`: returns true if sourceFileRank and destFileRank is on the same file / rank / diagonal respectively; otherwise, false.
+- `bool isSameDiagonal(wstring sourceFileRank, wstring destFileRank)`: returns true if sourceFileRank and destFileRank is on the same file / rank / diagonal respectively; otherwise, false.
+- `bool noVerticalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)`: returns true if there are no pieces on intermediate ranks on the board; otherwise, false.
+- `bool noHorizontalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)`: returns true iff there are no pieces on intermediate files on the board; otherwise, false.
+- `bool noDiagonalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)`: return true if there are no pieces on intermediate files and ranks, which is on the same diagonal, on the board; otherwise, false.
+- `bool destExistFriendlyPiece(wstring destFileRank, map<wstring, Piece*>* board)`: return true if there are no pieces on intermediate files and ranks, which is on the same diagonal, on the board; otherwise, false.
 
-# Rules of chess
+## Rules of chess
 
 The **rules of chess** (also known as the **laws of chess**) govern the play of the game of [chess](https://en.wikipedia.org/wiki/Chess "Chess"). Chess is a two-player abstract strategy board game. Each player controls sixteen pieces of six types on a chessboard. Each type of piece moves in a distinct way. The object of the game is to checkmate the opponent's king; checkmate occurs when a king is threatened with capture and has no escape. A game can end in various ways besides checkmate: a player can resign, and there are several ways a game can end in a draw.
 
@@ -70,7 +70,7 @@ While the exact origins of chess are unclear, modern rules first took form durin
 
 Besides the basic moves of the pieces, rules also govern the equipment used, time control, conduct and ethics of players, accommodations for physically challenged players, and recording of moves using chess notation. Procedures for resolving irregularities that can occur during a game are provided as well.
 
-## Initial setup
+### Initial setup
 
 Chess is played on a chessboard, a square board divided into a grid of 64 squares (eight-by-eight) of alternating color (similar to the board used in draughts). Regardless of the actual colors of the board, the lighter-colored squares are called "light" or "white", and the darker-colored squares are called "dark" or "black". Sixteen "white" and sixteen "black" pieces are placed on the board at the beginning of the game. The board is placed so that a white square is in each player's near-right corner. Horizontal rows are called _ranks_, and vertical columns are called _files_.
 
@@ -95,15 +95,15 @@ At the beginning of the game, the pieces are arranged as shown in the diagram: f
 
 Popular mnemonics used to remember the setup are "queen on her own color" and "white on right". The latter refers to setting up the board so that the square closest to each player's right is white.
 
-## Gameplay
+### Gameplay
 
 The player controlling the white pieces is named "White"; the player controlling the black pieces is named "Black". White moves first, then players alternate moves. Making a move is required; it is not legal to skip a move, even when having to move is detrimental. Play continues until a king is checkmated, a player resigns, or a draw is declared, as explained below. In addition, if the game is being played under a time control, a player who exceeds the time limit loses the game unless they cannot be checkmated.
 
 The official chess rules do not include a procedure for determining who plays White. Instead, this decision is left open to tournament-specific rules (e.g. a Swiss system tournament or round-robin tournament) or, in the case of casual play, mutual agreement, in which case some kind of random choice such as flipping a coin can be employed. A common method is for one player to conceal a pawn of each color in either hand; the other player chooses a hand to open and receives the color of the piece that is revealed.
 
-### Movement
+#### Movement
 
-#### Basic moves
+##### Basic moves
 
 Each type of chess piece has its own method of movement. A piece moves to a vacant square except when capturing an opponent's piece.
 
@@ -121,7 +121,7 @@ Except for any move of the knight and castling, pieces cannot jump over other pi
 
 The pawn is also involved in the two special moves _en passant_ and promotion.
 
-#### Castling
+##### Castling
 
 Castling consists of moving the king two squares towards a rook, then placing the rook on the other side of the king, adjacent to it. Castling is only permissible if all of the following conditions hold:
 
@@ -132,15 +132,15 @@ Castling consists of moving the king two squares towards a rook, then placing th
 
 An unmoved king and an unmoved rook of the same color on the same rank are said to have _castling rights_.
 
-#### _En passant_
+##### _En passant_
 
 When a pawn advances two squares on its initial move and ends the turn adjacent to an enemy pawn on the same rank, it may be captured _en passant_ by the enemy pawn as if it had moved only one square. This capture is legal only on the move immediately following the pawn's advance. The diagrams demonstrate an instance of this: if the white pawn moves from a2 to a4, the black pawn on b4 can capture it _en passant_, moving from b4 to a3, and the white pawn on a4 is removed from the board.
 
-#### Promotion
+##### Promotion
 
 If a player advances a pawn to its eighth rank, the pawn is then _promoted_ (converted) to a queen, rook, bishop, or knight of the same color at the choice of the player (a queen is usually chosen). The choice is not limited to previously captured pieces. Hence it is theoretically possible for a player to have up to nine queens or up to ten rooks, bishops, or knights if all of the player's pawns are promoted.
 
-### Check
+#### Check
 
 A king is _in check_ when it is under attack by at least one enemy piece. A piece unable to move because it would place its own king in check (it is pinned against its own king) may still deliver check to the opposing player.
 
@@ -152,21 +152,21 @@ It is illegal to make a move that places or leaves one's king in check. The poss
 
 In informal games, it is customary to announce "check" when making a move that puts the opponent's king in check. In formal competitions, however, check is rarely announced.
 
-### End of the game
+#### End of the game
 
-#### Checkmate
+##### Checkmate
 
 If a player's king is placed in check and there is no legal move that player can make to escape check, then the king is said to be _checkmated_, the game ends, and that player loses.
 
 The diagram shows an example checkmate position. The white king is threatened by the black queen; the empty square to which the king could move is also threatened; and the king cannot capture the queen, because it would then be in check by the rook.
 
-#### Resigning
+##### Resigning
 
 Either player may _resign_ at any time, conceding the game to the opponent. To indicate resignation, the player may say "I resign". Tipping over the king also indicates resignation, but it should be distinguished from accidentally knocking the king over. Stopping both clocks is not an indication of resigning, since clocks can be stopped to call the arbiter. An offer of a handshake is sometimes used, but it could be mistaken for a draw offer.
 
 Under FIDE Laws, a resignation by one player results in a draw if their opponent has no way to checkmate them via any series of legal moves, or a loss by that player otherwise.
 
-#### Draws
+##### Draws
 
 The game ends in a draw if any of these conditions occur:
 
@@ -185,7 +185,7 @@ These rules help prevent games from being extended indefinitely in tournaments.
 
 There is no longer a rule specifically defining perpetual check as a draw. In such a situation, either the threefold repetition rule or the fifty-move rule will eventually come into effect. More often, the players will simply agree to a draw.
 
-##### Dead position
+###### Dead position
 
 A _dead position_ is defined as a position where neither player can checkmate their opponent's king by any sequence of legal moves. According to the rules of chess the game is immediately terminated the moment a dead position appears on the board.
 
@@ -199,7 +199,7 @@ Blocked positions can arise in which progress is impossible for either side, suc
 
 USCF rules, for games played under a time control that does not include delay or increment, allow draw claims for "insufficient losing chances". For example, if each player has only a king and a knight, checkmate is only achievable with the co-operation of both players, even if it is not a dead position.
 
-### Touch-move rule
+#### Touch-move rule
 
 The touch-move rule is a fundamental principle in chess, ensuring that players commit to moves deliberated mentally, without physically experimenting on the board. According to this rule, a player who touches a piece with the intention of moving it must then move it if legally possible. This rule also applies to capturing: a player who touches an opponent's piece must capture it if a legal capture is available. Special considerations apply for castling and pawn promotion, reflecting their unique nature in the game.
 
