@@ -22,7 +22,7 @@ ChessCtrl. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*/
 #ifndef PCH_H
 #define PCH_H
 
-#define _CRT_SECURE_NO_WARNINGS
+// #define _CRT_SECURE_NO_WARNINGS
 
 // add headers that you want to pre-compile here
 #include "framework.h"

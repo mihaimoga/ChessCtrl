@@ -225,7 +225,8 @@ bool ChessBoard::sourceIsNotEmpty(wstring sourceFileRank, Board* board)
 {
 	try
 	{
-		board->at(sourceFileRank);
+		auto temp = board->at(sourceFileRank);
+		UNREFERENCED_PARAMETER(temp);
 	}
 	catch (const std::out_of_range& err)
 	{

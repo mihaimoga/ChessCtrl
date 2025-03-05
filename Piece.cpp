@@ -98,7 +98,8 @@ bool Piece::noVerticalObstruction(wstring sourceFileRank, wstring destFileRank, 
 		wstring between({ sourceFile, i });
 		try
 		{
-			board->at(between);
+			auto temp = board->at(between);
+			UNREFERENCED_PARAMETER(temp);
 			return false;
 		}
 		catch (const std::out_of_range& err)
@@ -130,7 +131,8 @@ bool Piece::noHorizontalObstruction(wstring sourceFileRank, wstring destFileRank
 		wstring between({ i, sourceRank });
 		try
 		{
-			board->at(between);
+			auto temp = board->at(between);
+			UNREFERENCED_PARAMETER(temp);
 			return false;
 		}
 		catch (const std::out_of_range& err)
@@ -176,7 +178,8 @@ bool Piece::noDiagonalObstruction(wstring sourceFileRank, wstring destFileRank, 
 
 		try
 		{
-			board->at(between);
+			auto temp = board->at(between);
+			UNREFERENCED_PARAMETER(temp);
 			return false;
 		}
 		catch (const std::out_of_range& err)
