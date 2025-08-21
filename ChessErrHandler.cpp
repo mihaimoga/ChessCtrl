@@ -14,6 +14,8 @@ ChessErrHandler::ChessErrHandler() {
 void ChessErrHandler::printErr(int errNo, Piece* piece, wstring sourceFileRank, wstring destFileRank)
 {
 	UNREFERENCED_PARAMETER(piece);
+	UNREFERENCED_PARAMETER(sourceFileRank);
+	UNREFERENCED_PARAMETER(destFileRank);
 	switch (errNo) {
 		case DEST_EQ_SOURCE: {
 			//cout << "Skipping your move? You cannot move from "

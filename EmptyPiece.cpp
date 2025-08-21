@@ -20,6 +20,8 @@ EmptyPiece* EmptyPiece::clone()
 // isValidMove(): return special code indicating it is an empty piece
 int EmptyPiece::isValidMove(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)
 {
+	UNREFERENCED_PARAMETER(sourceFileRank);
+	UNREFERENCED_PARAMETER(destFileRank);
 	UNREFERENCED_PARAMETER(board);
 	return ChessErrHandler::MOVED_EMPTY_PIECE;
 }
