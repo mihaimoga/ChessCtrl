@@ -202,12 +202,14 @@
     <ClInclude Include="ChessDemoDlg.h" />
     <ClInclude Include="ChessErrHandler.hpp" />
     <ClInclude Include="ChessInfo.hpp" />
+    <ClInclude Include="EdgeWebBrowser.h" />
     <ClInclude Include="EmptyPiece.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="HLinkCtrl.h" />
     <ClInclude Include="King.hpp" />
     <ClInclude Include="Knight.hpp" />
     <ClInclude Include="memdc.h" />
+    <ClInclude Include="Messages.h" />
     <ClInclude Include="Pawn.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Piece.hpp" />
@@ -216,6 +218,7 @@
     <ClInclude Include="Rook.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="VersionInfo.h" />
+    <ClInclude Include="WebBrowserDlg.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bishop.cpp" />
@@ -225,6 +228,7 @@
     <ClCompile Include="ChessDemoDlg.cpp" />
     <ClCompile Include="ChessErrHandler.cpp" />
     <ClCompile Include="ComputerPlayer.cpp" />
+    <ClCompile Include="EdgeWebBrowser.cpp" />
     <ClCompile Include="EmptyPiece.cpp" />
     <ClCompile Include="HLinkCtrl.cpp" />
     <ClCompile Include="King.cpp" />
@@ -240,11 +244,13 @@
     <ClCompile Include="Queen.cpp" />
     <ClCompile Include="Rook.cpp" />
     <ClCompile Include="VersionInfo.cpp" />
+    <ClCompile Include="WebBrowserDlg.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ChessDemo.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="res\ChessDemo.rc2" />
   </ItemGroup>
   <ItemGroup>
@@ -252,5 +258,14 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\Microsoft.Windows.ImplementationLibrary.1.0.260126.7\build\native\Microsoft.Windows.ImplementationLibrary.targets" Condition="Exists('packages\Microsoft.Windows.ImplementationLibrary.1.0.260126.7\build\native\Microsoft.Windows.ImplementationLibrary.targets')" />
+    <Import Project="packages\Microsoft.Web.WebView2.1.0.3967.48\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('packages\Microsoft.Web.WebView2.1.0.3967.48\build\native\Microsoft.Web.WebView2.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\Microsoft.Windows.ImplementationLibrary.1.0.260126.7\build\native\Microsoft.Windows.ImplementationLibrary.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Windows.ImplementationLibrary.1.0.260126.7\build\native\Microsoft.Windows.ImplementationLibrary.targets'))" />
+    <Error Condition="!Exists('packages\Microsoft.Web.WebView2.1.0.3967.48\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Microsoft.Web.WebView2.1.0.3967.48\build\native\Microsoft.Web.WebView2.targets'))" />
+  </Target>
 </Project>

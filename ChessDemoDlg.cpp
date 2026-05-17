@@ -20,6 +20,7 @@ ChessCtrl. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*/
 #include "framework.h"
 #include "ChessDemo.h"
 #include "ChessDemoDlg.h"
+#include "WebBrowserDlg.h"
 
 #include "VersionInfo.h"
 #include "HLinkCtrl.h"
@@ -193,6 +194,17 @@ BOOL CChessDemoDlg::OnInitDialog()
 			pSysMenu->AppendMenu(MF_SEPARATOR);
 			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
 		}
+		pSysMenu->AppendMenu(MF_SEPARATOR);
+		pSysMenu->AppendMenu(MF_STRING, IDM_TWITTER, _T("Twitter"));
+		pSysMenu->AppendMenu(MF_STRING, IDM_LINKEDIN, _T("LinkedIn"));
+		pSysMenu->AppendMenu(MF_STRING, IDM_FACEBOOK, _T("Facebook"));
+		pSysMenu->AppendMenu(MF_STRING, IDM_INSTAGRAM, _T("Instagram"));
+		pSysMenu->AppendMenu(MF_SEPARATOR);
+		pSysMenu->AppendMenu(MF_STRING, IDM_ISSUES, _T("Issues"));
+		pSysMenu->AppendMenu(MF_STRING, IDM_DISCUSSIONS, _T("Discussions"));
+		pSysMenu->AppendMenu(MF_STRING, IDM_WIKI, _T("Wiki"));
+		pSysMenu->AppendMenu(MF_SEPARATOR);
+		pSysMenu->AppendMenu(MF_STRING, IDM_USER_MANUAL, _T("User Manual"));
 	}
 
 	// Set the icon for this dialog.  The framework does this automatically
@@ -217,7 +229,65 @@ void CChessDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 	else
 	{
-		CDialogEx::OnSysCommand(nID, lParam);
+		if (nID == IDM_TWITTER)
+		{
+			::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://x.com/stefanmihaimoga"), nullptr, nullptr, SW_SHOW);
+		}
+		else
+		{
+			if (nID == IDM_LINKEDIN)
+			{
+				::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://www.linkedin.com/in/stefanmihaimoga/"), nullptr, nullptr, SW_SHOW);
+			}
+			else
+			{
+				if (nID == IDM_FACEBOOK)
+				{
+					::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://www.facebook.com/stefanmihaimoga"), nullptr, nullptr, SW_SHOW);
+				}
+				else
+				{
+					if (nID == IDM_INSTAGRAM)
+					{
+						::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://www.instagram.com/stefanmihaimoga/"), nullptr, nullptr, SW_SHOW);
+					}
+					else
+					{
+						if (nID == IDM_ISSUES)
+						{
+							::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://github.com/mihaimoga/ChessCtrl/issues"), nullptr, nullptr, SW_SHOW);
+						}
+						else
+						{
+							if (nID == IDM_DISCUSSIONS)
+							{
+								::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://github.com/mihaimoga/ChessCtrl/discussions"), nullptr, nullptr, SW_SHOW);
+							}
+							else
+							{
+								if (nID == IDM_WIKI)
+								{
+									::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://github.com/mihaimoga/ChessCtrl/wiki"), nullptr, nullptr, SW_SHOW);
+								}
+								else
+								{
+									if (nID == IDM_USER_MANUAL)
+									{
+										CWebBrowserDlg dlgWebBrowser(this);
+										dlgWebBrowser.DoModal();
+									}
+									else
+									{
+										CDialog::OnSysCommand(nID, lParam);
+									}
+								}
+							}
+						}
+					}
+
+				}
+			}
+		}
 	}
 }
 

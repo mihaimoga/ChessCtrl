@@ -13,26 +13,7 @@ or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 You should have received a copy of the GNU General Public License along with
 ChessCtrl. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*/
 
-// pch.h: This is a precompiled header file.
-// Files listed below are compiled only once, improving build performance for future builds.
-// This also affects IntelliSense performance, including code completion and many code browsing features.
-// However, files listed here are ALL re-compiled if any one of them is updated between builds.
-// Do not add files here that you will be updating frequently as this negates the performance advantage.
+#pragma once
 
-#ifndef PCH_H
-#define PCH_H
-
-// #define _CRT_SECURE_NO_WARNINGS
-
-// add headers that you want to pre-compile here
-#include "framework.h"
-
-#include <string>
-#include <vector>
-#include <sstream>
-#include <iomanip>
-#include <filesystem>
-
-#endif //PCH_H
-
-#define USER_MANUAL_URL _T("https://www.moga.doctor/chessctrl/")
+static constexpr UINT MSG_NAVIGATE = WM_APP + 123;
+static constexpr UINT MSG_RUN_ASYNC_CALLBACK = WM_APP + 124;

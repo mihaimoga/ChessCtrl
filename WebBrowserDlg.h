@@ -13,26 +13,34 @@ or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 You should have received a copy of the GNU General Public License along with
 ChessCtrl. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*/
 
-// pch.h: This is a precompiled header file.
-// Files listed below are compiled only once, improving build performance for future builds.
-// This also affects IntelliSense performance, including code completion and many code browsing features.
-// However, files listed here are ALL re-compiled if any one of them is updated between builds.
-// Do not add files here that you will be updating frequently as this negates the performance advantage.
+#pragma once
+#include "EdgeWebBrowser.h"
 
-#ifndef PCH_H
-#define PCH_H
+// CWebBrowserDlg dialog
 
-// #define _CRT_SECURE_NO_WARNINGS
+class CWebBrowserDlg : public CDialogEx
+{
+	DECLARE_DYNAMIC(CWebBrowserDlg)
 
-// add headers that you want to pre-compile here
-#include "framework.h"
+public:
+	CWebBrowserDlg(CWnd* pParent = nullptr);   // standard constructor
+	virtual ~CWebBrowserDlg();
 
-#include <string>
-#include <vector>
-#include <sstream>
-#include <iomanip>
-#include <filesystem>
+// Dialog Data
+#ifdef AFX_DESIGN_TIME
+	enum { IDD = IDD_WebBrowserDlg };
+#endif
 
-#endif //PCH_H
+protected:
+	CWebBrowser m_pCustomControl;
 
-#define USER_MANUAL_URL _T("https://www.moga.doctor/chessctrl/")
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+
+protected:
+	// Generated message map functions
+	virtual BOOL OnInitDialog();
+	afx_msg void OnDestroy();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+
+	DECLARE_MESSAGE_MAP()
+};
