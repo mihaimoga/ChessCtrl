@@ -99,12 +99,12 @@ CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
  */
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_VERSION, m_ctrlVersion);
-	DDX_Control(pDX, IDC_WARNING, m_ctrlWarning);
-	DDX_Control(pDX, IDC_WEBSITE, m_ctrlWebsite);
-	DDX_Control(pDX, IDC_EMAIL, m_ctrlEmail);
-	DDX_Control(pDX, IDC_CONTRIBUTORS, m_ctrlContributors);
+	CDialog::DoDataExchange(pDX);                              // let base class handle its own DDX first
+	DDX_Control(pDX, IDC_VERSION, m_ctrlVersion);              // bind version label
+	DDX_Control(pDX, IDC_WARNING, m_ctrlWarning);              // bind GPL license text box
+	DDX_Control(pDX, IDC_WEBSITE, m_ctrlWebsite);              // bind website hyperlink
+	DDX_Control(pDX, IDC_EMAIL, m_ctrlEmail);                  // bind email hyperlink
+	DDX_Control(pDX, IDC_CONTRIBUTORS, m_ctrlContributors);    // bind GitHub contributors hyperlink
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
@@ -124,27 +124,30 @@ END_MESSAGE_MAP()
 CString GetModuleFileName(_Inout_opt_ DWORD* pdwLastError = nullptr)
 {
 	CString strModuleFileName;
-	DWORD dwSize{ _MAX_PATH };
+	DWORD dwSize{ _MAX_PATH };   // start with a typical path length
 	while (true)
 	{
-		TCHAR* pszModuleFileName{ strModuleFileName.GetBuffer(dwSize) };
-		const DWORD dwResult{ ::GetModuleFileName(nullptr, pszModuleFileName, dwSize) };
+		TCHAR* pszModuleFileName{ strModuleFileName.GetBuffer(dwSize) }; // reserve a writable buffer
+		const DWORD dwResult{ ::GetModuleFileName(nullptr, pszModuleFileName, dwSize) }; // query the exe path
 		if (dwResult == 0)
 		{
+			// Win32 API failure — capture the error code and return empty
 			if (pdwLastError != nullptr)
 				*pdwLastError = GetLastError();
-			strModuleFileName.ReleaseBuffer(0);
+			strModuleFileName.ReleaseBuffer(0);  // discard partial content
 			return CString{};
 		}
 		else if (dwResult < dwSize)
 		{
+			// Path fit in the buffer — seal the string and return it
 			if (pdwLastError != nullptr)
 				*pdwLastError = ERROR_SUCCESS;
-			strModuleFileName.ReleaseBuffer(dwResult);
+			strModuleFileName.ReleaseBuffer(dwResult); // trim to actual length
 			return strModuleFileName;
 		}
 		else if (dwResult == dwSize)
 		{
+			// Buffer was exactly full, meaning the path may be truncated — double and retry
 			strModuleFileName.ReleaseBuffer(0);
 			dwSize *= 2;
 		}
@@ -164,21 +167,21 @@ BOOL CAboutDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	CString strFullPath{ GetModuleFileName() };
+	CString strFullPath{ GetModuleFileName() }; // get the running exe's full path
 	if (strFullPath.IsEmpty())
 #pragma warning(suppress: 26487)
-		return FALSE;
+		return FALSE;  // can't read version info without a valid path
 
-	if (m_pVersionInfo.Load(strFullPath.GetString()))
+	if (m_pVersionInfo.Load(strFullPath.GetString()))  // parse the VS_VERSION_INFO resource
 	{
-		CString strName = m_pVersionInfo.GetProductName().c_str();
-		CString strVersion = m_pVersionInfo.GetProductVersionAsString().c_str();
-		strVersion.Replace(_T(" "), _T(""));
-		strVersion.Replace(_T(","), _T("."));
-		const int nFirst = strVersion.Find(_T('.'));
-		const int nSecond = strVersion.Find(_T('.'), nFirst + 1);
-		strVersion.Truncate(nSecond);
-		if (nSecond == (nFirst + 2))
+		CString strName = m_pVersionInfo.GetProductName().c_str();            // e.g. "ChessCtrl"
+		CString strVersion = m_pVersionInfo.GetProductVersionAsString().c_str(); // e.g. "1, 0, 0, 1"
+		strVersion.Replace(_T(" "), _T(""));   // remove spaces between components
+		strVersion.Replace(_T(","), _T("."));  // convert comma separators to dots
+		const int nFirst  = strVersion.Find(_T('.'));           // position of first dot
+		const int nSecond = strVersion.Find(_T('.'), nFirst + 1); // position of second dot
+		strVersion.Truncate(nSecond);  // keep only major.minor, drop patch and build
+		if (nSecond == (nFirst + 2))   // single-digit minor (e.g. "1.0") — pad to "1.00"
 			strVersion.Insert(nFirst + 1, _T("0"));
 #if _WIN32 || _WIN64
 #if _WIN64
@@ -189,11 +192,12 @@ BOOL CAboutDlg::OnInitDialog()
 #endif
 	}
 
+	// Populate the read-only license text box with the standard GPL v3 notice
 	m_ctrlWarning.SetWindowText(_T("This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>."));
 
-	m_ctrlWebsite.SetHyperLink(_T("https://www.moga.doctor/"));
-	m_ctrlEmail.SetHyperLink(_T("mailto:stefan-mihai@moga.doctor"));
-	m_ctrlContributors.SetHyperLink(_T("https://github.com/mihaimoga/ChessCtrl/graphs/contributors"));
+	m_ctrlWebsite.SetHyperLink(_T("https://www.moga.doctor/"));                                           // author's personal website
+	m_ctrlEmail.SetHyperLink(_T("mailto:stefan-mihai@moga.doctor"));                                      // direct email link
+	m_ctrlContributors.SetHyperLink(_T("https://github.com/mihaimoga/ChessCtrl/graphs/contributors"));    // GitHub contributors graph
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
@@ -232,10 +236,10 @@ CChessDemoDlg::CChessDemoDlg(CWnd* pParent /*=nullptr*/)
  */
 void CChessDemoDlg::DoDataExchange(CDataExchange* pDX)
 {
-	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_COLOR_STATIC, m_pColorStatic);
-	DDX_Control(pDX, IDC_PROGRESS, m_ctrlProgress);
-	DDX_Control(pDX, IDC_CHESS_STATIC, m_pChessCtrl);
+	CDialogEx::DoDataExchange(pDX);                           // let base class handle its own DDX first
+	DDX_Control(pDX, IDC_COLOR_STATIC, m_pColorStatic);       // bind player color indicator static
+	DDX_Control(pDX, IDC_PROGRESS,     m_ctrlProgress);       // bind engine thinking progress bar
+	DDX_Control(pDX, IDC_CHESS_STATIC, m_pChessCtrl);         // bind the chess board control
 }
 
 BEGIN_MESSAGE_MAP(CChessDemoDlg, CDialogEx)
@@ -266,29 +270,29 @@ BOOL CChessDemoDlg::OnInitDialog()
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
-	CMenu* pSysMenu = GetSystemMenu(FALSE);
+	CMenu* pSysMenu = GetSystemMenu(FALSE);  // retrieve a copy of the window's system menu
 	if (pSysMenu != nullptr)
 	{
 		BOOL bNameValid;
 		CString strAboutMenu;
-		bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
+		bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);  // load the "About" caption from resources
 		ASSERT(bNameValid);
 		if (!strAboutMenu.IsEmpty())
 		{
-			pSysMenu->AppendMenu(MF_SEPARATOR);
-			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
+			pSysMenu->AppendMenu(MF_SEPARATOR);                      // visual divider before About
+			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu); // "About ChessDemo..."
 		}
-		pSysMenu->AppendMenu(MF_SEPARATOR);
-		pSysMenu->AppendMenu(MF_STRING, IDM_TWITTER, _T("Twitter"));
-		pSysMenu->AppendMenu(MF_STRING, IDM_LINKEDIN, _T("LinkedIn"));
-		pSysMenu->AppendMenu(MF_STRING, IDM_FACEBOOK, _T("Facebook"));
-		pSysMenu->AppendMenu(MF_STRING, IDM_INSTAGRAM, _T("Instagram"));
-		pSysMenu->AppendMenu(MF_SEPARATOR);
-		pSysMenu->AppendMenu(MF_STRING, IDM_ISSUES, _T("Issues"));
-		pSysMenu->AppendMenu(MF_STRING, IDM_DISCUSSIONS, _T("Discussions"));
-		pSysMenu->AppendMenu(MF_STRING, IDM_WIKI, _T("Wiki"));
-		pSysMenu->AppendMenu(MF_SEPARATOR);
-		pSysMenu->AppendMenu(MF_STRING, IDM_USER_MANUAL, _T("User Manual"));
+		pSysMenu->AppendMenu(MF_SEPARATOR);                          // divider before social media links
+		pSysMenu->AppendMenu(MF_STRING, IDM_TWITTER,   _T("Twitter"));   // author's Twitter/X profile
+		pSysMenu->AppendMenu(MF_STRING, IDM_LINKEDIN,  _T("LinkedIn"));  // author's LinkedIn profile
+		pSysMenu->AppendMenu(MF_STRING, IDM_FACEBOOK,  _T("Facebook"));  // author's Facebook profile
+		pSysMenu->AppendMenu(MF_STRING, IDM_INSTAGRAM, _T("Instagram")); // author's Instagram profile
+		pSysMenu->AppendMenu(MF_SEPARATOR);                          // divider before GitHub links
+		pSysMenu->AppendMenu(MF_STRING, IDM_ISSUES,      _T("Issues"));      // GitHub issue tracker
+		pSysMenu->AppendMenu(MF_STRING, IDM_DISCUSSIONS, _T("Discussions")); // GitHub discussions
+		pSysMenu->AppendMenu(MF_STRING, IDM_WIKI,        _T("Wiki"));        // GitHub project wiki
+		pSysMenu->AppendMenu(MF_SEPARATOR);                          // divider before documentation
+		pSysMenu->AppendMenu(MF_STRING, IDM_USER_MANUAL, _T("User Manual")); // embedded user manual
 	}
 
 	// Set the icon for this dialog.  The framework does this automatically
@@ -296,10 +300,11 @@ BOOL CChessDemoDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	m_pChessCtrl.m_pColorStatic = &m_pColorStatic;
-	m_pChessCtrl.m_ctrlProgress = &m_ctrlProgress;
-	m_pChessCtrl.SetUI();
-	m_pChessCtrl.SetComputerPlayer(true);
+	// Wire up the chess control's back-references so it can update the UI directly
+	m_pChessCtrl.m_pColorStatic = &m_pColorStatic;  // lets the control update the color indicator
+	m_pChessCtrl.m_ctrlProgress = &m_ctrlProgress;  // lets the control drive the progress bar
+	m_pChessCtrl.SetUI();                            // perform initial board rendering
+	m_pChessCtrl.SetComputerPlayer(true);            // enable the computer opponent
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -325,69 +330,68 @@ BOOL CChessDemoDlg::OnInitDialog()
  */
 void CChessDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
-	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
+	if ((nID & 0xFFF0) == IDM_ABOUTBOX)  // mask low nibble; standard MFC pattern for custom sys commands
 	{
 		CAboutDlg dlgAbout;
-		dlgAbout.DoModal();
+		dlgAbout.DoModal();  // show the About dialog modally
 	}
 	else
 	{
-		if (nID == IDM_TWITTER)
+		if (nID == IDM_TWITTER)  // open author's Twitter/X profile
 		{
 			::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://x.com/stefanmihaimoga"), nullptr, nullptr, SW_SHOW);
 		}
 		else
 		{
-			if (nID == IDM_LINKEDIN)
+			if (nID == IDM_LINKEDIN)  // open author's LinkedIn profile
 			{
 				::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://www.linkedin.com/in/stefanmihaimoga/"), nullptr, nullptr, SW_SHOW);
 			}
 			else
 			{
-				if (nID == IDM_FACEBOOK)
+				if (nID == IDM_FACEBOOK)  // open author's Facebook profile
 				{
 					::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://www.facebook.com/stefanmihaimoga"), nullptr, nullptr, SW_SHOW);
 				}
 				else
 				{
-					if (nID == IDM_INSTAGRAM)
+					if (nID == IDM_INSTAGRAM)  // open author's Instagram profile
 					{
 						::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://www.instagram.com/stefanmihaimoga/"), nullptr, nullptr, SW_SHOW);
 					}
 					else
 					{
-						if (nID == IDM_ISSUES)
+						if (nID == IDM_ISSUES)  // open GitHub issue tracker
 						{
 							::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://github.com/mihaimoga/ChessCtrl/issues"), nullptr, nullptr, SW_SHOW);
 						}
 						else
 						{
-							if (nID == IDM_DISCUSSIONS)
+							if (nID == IDM_DISCUSSIONS)  // open GitHub discussions page
 							{
 								::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://github.com/mihaimoga/ChessCtrl/discussions"), nullptr, nullptr, SW_SHOW);
 							}
 							else
 							{
-								if (nID == IDM_WIKI)
+								if (nID == IDM_WIKI)  // open GitHub project wiki
 								{
 									::ShellExecute(GetSafeHwnd(), _T("open"), _T("https://github.com/mihaimoga/ChessCtrl/wiki"), nullptr, nullptr, SW_SHOW);
 								}
 								else
 								{
-									if (nID == IDM_USER_MANUAL)
+									if (nID == IDM_USER_MANUAL)  // open embedded web browser with user manual
 									{
 										CWebBrowserDlg dlgWebBrowser(this);
 										dlgWebBrowser.DoModal();
 									}
 									else
 									{
-										CDialog::OnSysCommand(nID, lParam);
+										CDialog::OnSysCommand(nID, lParam);  // forward unrecognized commands to the base class
 									}
 								}
 							}
 						}
 					}
-
 				}
 			}
 		}
@@ -454,10 +458,11 @@ bool WaitWithMessageLoop(HANDLE hEvent, DWORD dwTimeout);
  */
 void CChessDemoDlg::OnCancel()
 {
-	if (g_bThreadRunning)
+	if (g_bThreadRunning)  // computer player thread is still active
 	{
-		g_bThreadRunning = false;
+		g_bThreadRunning = false;  // signal the thread to exit its loop
+		// pump messages while waiting so the UI stays responsive during shutdown
 		VERIFY(WaitWithMessageLoop(m_pChessCtrl.m_pChessBoard.m_hComputerThread, INFINITE));
 	}
-	CDialogEx::OnCancel();
+	CDialogEx::OnCancel();  // proceed with normal dialog teardown
 }
