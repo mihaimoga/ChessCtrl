@@ -13,8 +13,9 @@ or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 You should have received a copy of the GNU General Public License along with
 ChessCtrl. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*/
 
-// ChessDemoDlg.cpp : implementation file
-//
+/// @file ChessDemoDlg.cpp
+/// @brief Implementation of the main application dialog and the About dialog
+///        for the ChessDemo application.
 
 #include "pch.h"
 #include "framework.h"
@@ -29,39 +30,73 @@ ChessCtrl. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*/
 #define new DEBUG_NEW
 #endif
 
-// CAboutDlg dialog used for App About
-
+/**
+ * @class CAboutDlg
+ * @brief Modal dialog that displays application version, license information,
+ *        and hyperlinks to the project website, email, and contributors page.
+ * @extends CDialog
+ */
 class CAboutDlg : public CDialog
 {
 public:
+	/** @brief Default constructor. Initializes the dialog with IDD_ABOUTBOX. */
 	CAboutDlg();
 
 	// Dialog Data
 	enum { IDD = IDD_ABOUTBOX };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	/**
+	 * @brief Exchanges data between dialog controls and member variables.
+	 * @param pDX Pointer to the CDataExchange object used for DDX/DDV.
+	 */
+	virtual void DoDataExchange(CDataExchange* pDX);
 
 	// Implementation
 public:
+	/**
+	 * @brief Initializes the About dialog: populates version, license text,
+	 *        and sets hyperlinks for website, email, and contributors.
+	 * @return TRUE to set focus to the first control; FALSE if focus is set manually.
+	 */
 	virtual BOOL OnInitDialog();
+
+	/** @brief Cleans up resources when the dialog is destroyed. */
 	afx_msg void OnDestroy();
 
 protected:
+	/** @brief Static control displaying the product name and version string. */
 	CStatic m_ctrlVersion;
+
+	/** @brief Read-only edit control displaying the GPL license warning text. */
 	CEdit m_ctrlWarning;
+
+	/** @brief Helper object used to read the executable's version resource. */
 	CVersionInfo m_pVersionInfo;
+
+	/** @brief Hyperlink control navigating to the author's website. */
 	CHLinkCtrl m_ctrlWebsite;
+
+	/** @brief Hyperlink control opening a mailto link to the author's email address. */
 	CHLinkCtrl m_ctrlEmail;
+
+	/** @brief Hyperlink control navigating to the GitHub contributors graph. */
 	CHLinkCtrl m_ctrlContributors;
 
 	DECLARE_MESSAGE_MAP()
 };
 
+/**
+ * @brief Constructs a CAboutDlg, linking to the IDD_ABOUTBOX dialog resource.
+ */
 CAboutDlg::CAboutDlg() : CDialog(CAboutDlg::IDD)
 {
 }
 
+/**
+ * @brief Binds dialog controls to their corresponding member variables.
+ * @param pDX Pointer to the CDataExchange object facilitating DDX/DDV.
+ */
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -76,6 +111,16 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
+/**
+ * @brief Retrieves the full file path of the currently running executable.
+ *
+ * Dynamically grows the buffer until the path fits or an error occurs,
+ * which handles paths longer than MAX_PATH on modern Windows.
+ *
+ * @param[out] pdwLastError Optional pointer that receives the last Win32 error
+ *                          code, or ERROR_SUCCESS on success. May be nullptr.
+ * @return The full path of the executable as a CString, or an empty CString on failure.
+ */
 CString GetModuleFileName(_Inout_opt_ DWORD* pdwLastError = nullptr)
 {
 	CString strModuleFileName;
@@ -106,6 +151,15 @@ CString GetModuleFileName(_Inout_opt_ DWORD* pdwLastError = nullptr)
 	}
 }
 
+/**
+ * @brief Initializes the About dialog.
+ *
+ * Loads the version info from the running executable and populates
+ * the version label with the product name and version number (32/64-bit).
+ * Also sets the GPL license text and configures all hyperlink controls.
+ *
+ * @return TRUE to set focus to the first control automatically.
+ */
 BOOL CAboutDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
@@ -145,6 +199,9 @@ BOOL CAboutDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
+/**
+ * @brief Handles WM_DESTROY; delegates cleanup to the base class.
+ */
 void CAboutDlg::OnDestroy()
 {
 	CDialog::OnDestroy();
@@ -152,12 +209,27 @@ void CAboutDlg::OnDestroy()
 
 // CChessDemoDlg dialog
 
+/**
+ * @brief Constructs the main application dialog.
+ *
+ * Links to the IDD_CHESSDEMO_DIALOG resource and loads the main frame icon.
+ *
+ * @param pParent Pointer to the parent window. Defaults to nullptr.
+ */
 CChessDemoDlg::CChessDemoDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CHESSDEMO_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
+/**
+ * @brief Binds dialog controls to their corresponding member variables.
+ *
+ * Maps IDC_COLOR_STATIC to m_pColorStatic, IDC_PROGRESS to m_ctrlProgress,
+ * and IDC_CHESS_STATIC to m_pChessCtrl.
+ *
+ * @param pDX Pointer to the CDataExchange object facilitating DDX/DDV.
+ */
 void CChessDemoDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
@@ -174,6 +246,16 @@ END_MESSAGE_MAP()
 
 // CChessDemoDlg message handlers
 
+/**
+ * @brief Initializes the main dialog.
+ *
+ * Adds extended entries to the system menu (About, social media links,
+ * GitHub issue tracker, discussions, wiki, and user manual). Sets the
+ * dialog icons, wires up the chess control with the color static and
+ * progress bar, and enables the computer player.
+ *
+ * @return TRUE to set focus to the first control automatically.
+ */
 BOOL CChessDemoDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -222,6 +304,25 @@ BOOL CChessDemoDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
+/**
+ * @brief Handles system menu command messages.
+ *
+ * Dispatches the following custom commands:
+ * - IDM_ABOUTBOX   : Opens the About dialog.
+ * - IDM_TWITTER    : Opens the author's Twitter/X profile in the default browser.
+ * - IDM_LINKEDIN   : Opens the author's LinkedIn profile in the default browser.
+ * - IDM_FACEBOOK   : Opens the author's Facebook profile in the default browser.
+ * - IDM_INSTAGRAM  : Opens the author's Instagram profile in the default browser.
+ * - IDM_ISSUES     : Opens the GitHub issues page in the default browser.
+ * - IDM_DISCUSSIONS: Opens the GitHub discussions page in the default browser.
+ * - IDM_WIKI       : Opens the GitHub wiki page in the default browser.
+ * - IDM_USER_MANUAL: Opens the embedded WebBrowser dialog pointing to the user manual.
+ *
+ * All unrecognized commands are forwarded to the base class.
+ *
+ * @param nID    The system command identifier.
+ * @param lParam Additional message-specific data.
+ */
 void CChessDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
@@ -297,6 +398,12 @@ void CChessDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
+/**
+ * @brief Handles WM_PAINT.
+ *
+ * When the window is minimized, manually centers and draws the application
+ * icon in the client area. Otherwise, delegates to the base class painter.
+ */
 void CChessDemoDlg::OnPaint()
 {
 	if (IsIconic())
@@ -322,8 +429,14 @@ void CChessDemoDlg::OnPaint()
 	}
 }
 
-// The system calls this function to obtain the cursor to display while the user drags
-//  the minimized window.
+/**
+ * @brief Returns the cursor to display while the user drags the minimized window.
+ *
+ * Casts the application icon handle to an HCURSOR so the icon follows
+ * the mouse when the window is dragged in its minimized state.
+ *
+ * @return HCURSOR representing the application icon.
+ */
 HCURSOR CChessDemoDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
@@ -332,6 +445,13 @@ HCURSOR CChessDemoDlg::OnQueryDragIcon()
 extern bool g_bThreadRunning;
 bool WaitWithMessageLoop(HANDLE hEvent, DWORD dwTimeout);
 
+/**
+ * @brief Handles the Cancel action (Escape key or close button).
+ *
+ * If the computer-player thread is still running, signals it to stop by
+ * clearing g_bThreadRunning and waits for the thread to finish via a
+ * message-pumping wait loop before delegating to the base class cancel handler.
+ */
 void CChessDemoDlg::OnCancel()
 {
 	if (g_bThreadRunning)
