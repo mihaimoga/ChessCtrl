@@ -250,6 +250,7 @@
     <ResourceCompile Include="ChessDemo.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="AGENTS.md" />
     <None Include="packages.config" />
     <None Include="res\ChessDemo.rc2" />
   </ItemGroup>
