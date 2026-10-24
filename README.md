@@ -82,7 +82,7 @@ Each player controls sixteen pieces:
 - Knight
 - Pawn
 
-![ChessDemo.png](ChessDemo.png)
+![ChessCtrl.png](ChessCtrl.png)
 
 At the beginning of the game, the pieces are arranged as shown in the diagram: for each side one king, one queen, two rooks, two bishops, two knights, and eight pawns. The pieces are placed, one per square, as follows:
 

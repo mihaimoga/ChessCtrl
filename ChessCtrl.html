@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>ChessCtrl - Help</title>
+		<!--meta http-equiv="Refresh" content="5; url=https://www.moga.doctor/chessctrl/"-->
+		<link rel="icon" type="image/png" href="https://www.moga.doctor/romania-flag-square-icon-256.png">
+		<link rel="apple-touch-icon" href="https://www.moga.doctor/romania-flag-square-icon-256.png">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<div class="container">
+				<a class="navbar-brand" href="https://www.moga.doctor/chessctrl/" target="_blank">ChessCtrl</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link" href="https://github.com/mihaimoga/ChessCtrl/graphs/contributors" target="_blank">Contributors</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://github.com/mihaimoga/ChessCtrl/issues" target="_blank">Issues</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://github.com/mihaimoga/ChessCtrl/discussions" target="_blank">Discussions</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://github.com/mihaimoga/ChessCtrl/wiki" target="_blank">Wiki</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container">
+			<div class="row divide-md">
+				<div class="col-md-12 col-sm-12 divide-md text-justify" style="text-align: justify;">
+					<h1 class="text-center">ChessCtrl</h1>
+
+					<p><em>ChessCtrl</em> is a fully featured Chess Control written in C++ with the help of the MFC library. The main class is, you guessed, C<em>ChessCtrl</em>, which includes <code>ChessBoard</code> class.</p>
+
+					<p><code>ChessBoard</code> class implements the following functions:</p>
+					<ul>
+						<li><code>void resetBoard()</code>: makes a new game; rest the fields of the engine and insert appropriate pieces onto the board.</li>
+						<li><code>void submitMove(const TCHAR* fromSquare, const TCHAR* toSquare)</code></li>
+						<li><code>void getANewBoard()</code></li>
+						<li><code>void makeGameInCheck()</code></li>
+						<li><code>void makeGameNotInCheck()</code></li>
+						<li><code>void beginAGame()</code></li>
+						<li><code>void endTheGame()</code></li>
+						<li><code>void makeWhiteGoesNext()</code></li>
+						<li><code>bool gameCanContinue(wstring sourceFileRank, wstring destFileRank)</code>: checks if the game is not ended.</li>
+						<li><code>bool sourceAndDestIsValid(wstring sourceFileRank, wstring destFileRank)</code>: check if given source and dest's file and rank represenation is valid (wstring with 2 chars) and are within chess board.</li>
+						<li><code>bool withinChessBoard(wstring fileRank)</code>: checks if file is in range 'A'-'H', rank is in range '1'-'8'.</li>
+						<li><code>bool sourceIsNotEmpty(wstring sourceFileRank, Board* board)</code>: checks if source is not an empty square (i.e. there is a piece to move).</li>
+						<li><code>bool isCurrentPlayerPiece(bool isWhiteTurn, Piece* piece, wstring sourceFileRank)</code>: checks if the piece at source belongs to the player in turn.</li>
+						<li><code>bool pieceMoveIsValid(int returnCode, Piece* piece, wstring sourceFileRank, wstring destFileRank)</code>: checks if the return code for validating piece move is zero.</li>
+						<li><code>bool pieceMoveKeepsKingSafe(bool isWhiteTurn, Piece* piece, wstring sourceFileRank, wstring destFileRank, Board* sandboxBoard)</code>: checks if given side's King is safe under the given board (in ChessBoard it would be a sandbox), if not give out an error to user and return false.</li>
+						<li><code>void handleInvalidMove(int returnCode, Piece* piece, wstring sourceFileRank, wstring destFileRank)</code>: calls the error handler to print the error, passing the information given by the calling functions.</li>
+						<li><code>bool kingIsSafeFromRivalry(bool isWhiteTurn, Board* board)</code>: returns true if none of the Pieces of the other side can capture the given side's King (i.e. has a valid move to the King's file and rank).</li>
+						<li><code>bool playerHaveValidMove(bool isWhiteTurn, Board* board)</code>: returns true if the given side have a valid move on the given board.</li>
+						<li><code>wstring findPlayersKingFileRank(bool isWhiteTurn, Board* board)</code>: iterates and returns the location (file &amp; rank) of the given side's King.</li>
+						<li><code>Piece* tryMoveAndReturnCaptured(wstring sourceFileRank, wstring destFileRank, Board* board)</code>: Given a board, conducts move from source to destination & get the captured; Case 1 (try block) – Another piece in destination (conduct capture); Case 2 (catch block) – No piece exists in destination (conduct move). Return the piece if in case 1, NULL otherwise.</li>
+						<li><code>void confirmMoveOnBoard(wstring sourceFileRank, wstring destFileRank, Board* board)</code>: Given a board, conduct the move from source to destination; Case 1 (try block) – Another piece in destination (conduct capture); Case 2 (catch block) – No piece exists in destination (conduct move).</li>
+						<li><code>void switchPlayers()</code></li>
+						<li><code>Board* cloneBoard(Board* board)</code>: deep clone the given board – including all the Piece within the map.</li>
+						<li><code>void deepCleanBoard(Board* board)</code>: deep clean the given board, free all containing Piece's memory and itself.</li>
+						<li><code>bool showMoveAndCheckIfGameCanContinue(Piece* piece, wstring sourceFileRank, Piece* capturedPiece, wstring destFileRank, bool isWhiteTurn, Board* board)</code>: Printing methods, in both text and graphics, on stdout.</li>
+						<li><code>void ComputerPlayer()</code>: implements the Backtracking algorithm for computer's Black pieces move, if enabled.</li>
+					</ul>
+
+					<p><code>ChessBoard</code> class includes the following classes:</p>
+					<ul>
+						<li><code>EmptyPiece</code> (derived from <code>Piece</code>)</li>
+						<li><code>Bishop</code> (derived from <code>Piece</code>)</li>
+						<li><code>King</code> (derived from <code>Piece</code>)</li>
+						<li><code>Knight</code> (derived from <code>Piece</code>)</li>
+						<li><code>Pawn</code> (derived from <code>Piece</code>)</li>
+						<li><code>Queen</code> (derived from <code>Piece</code>)</li>
+						<li><code>Rook</code> (derived from <code>Piece</code>)</li>
+					</ul>
+
+					<p><code>Piece</code> class declares the follwing virtual functions:</p>
+					<ul>
+						<li><code>Piece* clone()</code>: returns a different object with same information of itself.</li>
+						<li><code>int isValidMove(wstring sourceFileRank, wstring destFileRank, map&lt;wstring, Piece*&gt;* board)</code></li>
+						<li><code>wstring playerToString()</code>: return wstring rep. of the piece's player.</li>
+						<li><code>wstring toString()</code>: returns the wstring rep. of the piece.</li>
+						<li><code>wstring toGraphics()</code>: returns graphical rep. of the piece.</li>
+						<li><code>int Score()</code>: return the score of the piece (used by Backtracking algorithm to perform the computer move).</li>
+					</ul>
+
+					<p>And it implements the following functions:</p>
+					<ul>
+						<li><code>void confirmMove()</code>: sets isFirstMove false when called as it has moved at least once.</li>
+						<li><code>bool isWhitePlayer()</code>: returns if this piece belongs to White player.</li>
+						<li><code>bool isKing()</code>: returns true if the piece is a King (represented by isKing – only set to true by King constructor).</li>
+						<li><code>bool isFriendly(Piece* that)</code>: returns true if this and that Piece belongs to same player.</li>
+						<li><code>bool isSameFile(wstring sourceFileRank, wstring destFileRank)</code>: returns true if sourceFileRank and destFileRank is on the same file / rank / diagonal respectively; otherwise, false.</li>
+						<li><code>bool isSameRank(wstring sourceFileRank, wstring destFileRank)</code>: returns true if sourceFileRank and destFileRank is on the same file / rank / diagonal respectively; otherwise, false.</li>
+						<li><code>bool isSameDiagonal(wstring sourceFileRank, wstring destFileRank)</code>: returns true if sourceFileRank and destFileRank is on the same file / rank / diagonal respectively; otherwise, false.</li>
+						<li><code>bool noVerticalObstruction(wstring sourceFileRank, wstring destFileRank, map&lt;wstring, Piece*&gt;* board)</code>: returns true if there are no pieces on intermediate ranks on the board; otherwise, false.</li>
+						<li><code>bool noHorizontalObstruction(wstring sourceFileRank, wstring destFileRank, map&lt;wstring, Piece*&gt;* board)</code>: returns true iff there are no pieces on intermediate files on the board; otherwise, false.</li>
+						<li><code>bool noDiagonalObstruction(wstring sourceFileRank, wstring destFileRank, map&lt;wstring, Piece*&gt;* board)</code>: return true if there are no pieces on intermediate files and ranks, which is on the same diagonal, on the board; otherwise, false.</li>
+						<li><code>bool destExistFriendlyPiece(wstring destFileRank, map&lt;wstring, Piece*&gt;* board)</code>: return true if there are no pieces on intermediate files and ranks, which is on the same diagonal, on the board; otherwise, false.</li>
+					</ul>
+
+					<h2>Rules of chess</h2>
+
+					<p>The rules of chess (also known as the laws of chess) govern the play of the game of chess. Chess is a two-player abstract strategy board game. Each player controls sixteen pieces of six types on a chessboard. Each type of piece moves in a distinct way. The object of the game is to checkmate the opponent's king; checkmate occurs when a king is threatened with capture and has no escape. A game can end in various ways besides checkmate: a player can resign, and there are several ways a game can end in a draw.</p>
+
+					<p>While the exact origins of chess are unclear, modern rules first took form during the Middle Ages. The rules continued to be slightly modified until the early 19th century, when they reached essentially their current form. The rules also varied somewhat from region to region. Today, the standard rules are set by FIDE (Fédération Internationale des Échecs), the international governing body for chess. Slight modifications are made by some national organizations for their own purposes. There are variations of the rules for fast chess, correspondence chess, online chess, and Chess960.</p>
+
+					<p>Besides the basic moves of the pieces, rules also govern the equipment used, time control, conduct and ethics of players, accommodations for physically challenged players, and recording of moves using chess notation. Procedures for resolving irregularities that can occur during a game are provided as well.</p>
+
+					<h3>Initial setup</h3>
+
+					<p>Chess is played on a chessboard, a square board divided into a grid of 64 squares (eight-by-eight) of alternating color (similar to the board used in draughts). Regardless of the actual colors of the board, the lighter-colored squares are called &quot;light&quot; or &quot;white&quot;, and the darker-colored squares are called &quot;dark&quot; or &quot;black&quot;. Sixteen &quot;white&quot; and sixteen &quot;black&quot; pieces are placed on the board at the beginning of the game. The board is placed so that a white square is in each player's near-right corner. Horizontal rows are called ranks, and vertical columns are called files.</p>
+
+					<p>Each player controls sixteen pieces:</p>
+					<ul>
+						<li>King</li>
+						<li>Queen</li>
+						<li>Rook</li>
+						<li>Bishop</li>
+						<li>Knight</li>
+						<li>Pawn</li>
+					</ul>
+					<p class="text-center"><img class="img-thumbnail" src="ChessCtrl.png" alt="ChessCtrl"></p>
+
+					<p>At the beginning of the game, the pieces are arranged as shown in the diagram: for each side one king, one queen, two rooks, two bishops, two knights, and eight pawns. The pieces are placed, one per square, as follows:</p>
+					<ul>
+						<li>Rooks are placed on the outside corners, right and left edge.</li>
+						<li>Knights are placed immediately inside of the rooks.</li>
+						<li>Bishops are placed immediately inside of the knights.</li>
+						<li>The queen is placed on the central square of the same color of that of the piece: white queen on the white square and black queen on the black square.</li>
+						<li>The king takes the vacant spot next to the queen.</li>
+						<li>Pawns are placed one square in front of all of the other pieces.</li>
+					</ul>
+
+					<p>Popular mnemonics used to remember the setup are &quot;queen on her own color&quot; and &quot;white on right&quot;. The latter refers to setting up the board so that the square closest to each player's right is white.</p>
+
+					<h3>Gameplay</h3>
+
+					<p>The player controlling the white pieces is named &quot;White&quot;; the player controlling the black pieces is named &quot;Black&quot;. White moves first, then players alternate moves. Making a move is required; it is not legal to skip a move, even when having to move is detrimental. Play continues until a king is checkmated, a player resigns, or a draw is declared, as explained below. In addition, if the game is being played under a time control, a player who exceeds the time limit loses the game unless they cannot be checkmated.</p>
+
+					<p>The official chess rules do not include a procedure for determining who plays White. Instead, this decision is left open to tournament-specific rules (e.g. a Swiss system tournament or round-robin tournament) or, in the case of casual play, mutual agreement, in which case some kind of random choice such as flipping a coin can be employed. A common method is for one player to conceal a pawn of each color in either hand; the other player chooses a hand to open and receives the color of the piece that is revealed.</p>
+
+					<h4>Movement</h4>
+
+					<h5>Basic moves</h5>
+					
+					<p>Each type of chess piece has its own method of movement. A piece moves to a vacant square except when capturing an opponent's piece.</p>
+
+					<p>Except for any move of the knight and castling, pieces cannot jump over other pieces. A piece is captured (or taken) when an attacking enemy piece replaces it on its square. The captured piece is thereby permanently removed from the game. The king can be put in check but cannot be captured (see below).</p>
+					<ul>
+						<li>The king moves exactly one square horizontally, vertically, or diagonally. A special move with the king known as castling is allowed only once per player, per game (see below).</li>
+						<li>A rook moves any number of vacant squares horizontally or vertically. It also is moved when castling.</li>
+						<li>A bishop moves any number of vacant squares diagonally. (Thus a bishop can move to only light or dark squares, not both.)</li>
+						<li>The queen moves any number of vacant squares horizontally, vertically, or diagonally.</li>
+						<li>A knight moves to one of the nearest squares not on the same rank, file, or diagonal. (This can be thought of as moving two squares horizontally then one square vertically, or moving one square horizontally then two squares vertically—i.e. in an &quot;L&quot; pattern.) The knight is not blocked by other pieces; it jumps to the new location.</li>
+						<li>Pawns have the most complex rules of movement:
+							<ul>
+								<li>A pawn moves straight forward one square, if that square is vacant. If it has not yet moved, a pawn also has the option of moving two squares straight forward, provided both squares are vacant. Pawns cannot move backwards.</li>
+								<li>A pawn, unlike other pieces, captures differently from how it moves. A pawn can capture an enemy piece on either of the two squares diagonally in front of the pawn. It cannot move to those squares when vacant except when capturing en passant.</li>
+							</ul>
+						</li>
+					</ul>
+
+					<p>The pawn is also involved in the two special moves en passant and promotion.</p>
+
+					<h5>Castling</h5>
+					
+					<p>Castling consists of moving the king two squares towards a rook, then placing the rook on the other side of the king, adjacent to it. Castling is only permissible if all of the following conditions hold:</p>
+					<ul>
+						<li>The king and rook involved in castling must not have previously moved;</li>
+						<li>There must be no pieces between the king and the rook;</li>
+						<li>The king may not currently be under attack, nor may the king pass through or end up in a square that is under attack by an enemy piece (though the rook is permitted to be under attack and to pass over an attacked square);</li>
+						<li>The castling must be kingside or queenside as shown in the diagram.</li>
+					</ul>
+					
+					<p>An unmoved king and an unmoved rook of the same color on the same rank are said to have castling rights.</p>
+
+					<h5>En passant</h5>
+					
+					<p>When a pawn advances two squares on its initial move and ends the turn adjacent to an enemy pawn on the same rank, it may be captured en passant by the enemy pawn as if it had moved only one square. This capture is legal only on the move immediately following the pawn's advance. The diagrams demonstrate an instance of this: if the white pawn moves from a2 to a4, the black pawn on b4 can capture it en passant, moving from b4 to a3, and the white pawn on a4 is removed from the board.</p>
+
+					<h5>Promotion</h5>
+					
+					<p>If a player advances a pawn to its eighth rank, the pawn is then promoted (converted) to a queen, rook, bishop, or knight of the same color at the choice of the player (a queen is usually chosen). The choice is not limited to previously captured pieces. Hence it is theoretically possible for a player to have up to nine queens or up to ten rooks, bishops, or knights if all of the player's pawns are promoted.</p>
+
+					<h4>Check</h4>
+
+					<p>A king is in check when it is under attack by at least one enemy piece. A piece unable to move because it would place its own king in check (it is pinned against its own king) may still deliver check to the opposing player.</p>
+
+					<p>It is illegal to make a move that places or leaves one's king in check. The possible ways to get out of check are:</p>
+					<ul>
+						<li>Move the king to a square where it is not in check.</li>
+						<li>Capture the checking piece.</li>
+						<li>Interpose a piece between the king and the opponent's threatening piece (block the check).</li>
+					</ul>
+
+					<p>In informal games, it is customary to announce &quot;check&quot; when making a move that puts the opponent's king in check. In formal competitions, however, check is rarely announced.</p>
+
+					<h4>End of the game</h4>
+
+					<h5>Checkmate</h5>
+
+					<p>If a player's king is placed in check and there is no legal move that player can make to escape check, then the king is said to be checkmated, the game ends, and that player loses.</p>
+
+					<p>The diagram shows an example checkmate position. The white king is threatened by the black queen; the empty square to which the king could move is also threatened; and the king cannot capture the queen, because it would then be in check by the rook.</p>
+
+					<h5>Resigning</h5>
+					
+					<p>Either player may resign at any time, conceding the game to the opponent. To indicate resignation, the player may say &quot;I resign&quot;. Tipping over the king also indicates resignation, but it should be distinguished from accidentally knocking the king over. Stopping both clocks is not an indication of resigning, since clocks can be stopped to call the arbiter. An offer of a handshake is sometimes used, but it could be mistaken for a draw offer.</p>
+
+					<p>Under FIDE Laws, a resignation by one player results in a draw if their opponent has no way to checkmate them via any series of legal moves, or a loss by that player otherwise.</p>
+
+					<h5>Draws</h5>
+					
+					<p>The game ends in a draw if any of these conditions occur:</p>
+					<ul>
+						<li>The player to move is not in check and has no legal move. This situation is called a stalemate. An example of such a position is shown in the adjacent diagram.</li>
+						<li>The game reaches a dead position.</li>
+						<li>Both players agree to a draw after one of the players makes such an offer.</li>
+					</ul>
+					<p>In addition, in the FIDE rules, if a player has run out of time (see below), or has resigned, but the position is such that there is no way for the opponent to give checkmate by any series of legal moves, the game is a draw.</p>
+
+					<p>FIDE's competitive rules of play allow a player to claim a draw in either of two situations:</p>
+					<ul>
+						<li>Fifty moves have been made by each player without a capture or promotion of a pawn (this is the fifty-move rule;</li>
+						<li>The same position has appeared three times (or has appeared twice and the player claiming the draw can force the third appearance); this is the threefold repetition rule.</li>
+					</ul>
+					
+					<p>These rules help prevent games from being extended indefinitely in tournaments.</p>
+
+					<p>There is no longer a rule specifically defining perpetual check as a draw. In such a situation, either the threefold repetition rule or the fifty-move rule will eventually come into effect. More often, the players will simply agree to a draw.</p>
+
+					<h5>Dead position</h5>
+					
+					<p>A dead position is defined as a position where neither player can checkmate their opponent's king by any sequence of legal moves. According to the rules of chess the game is immediately terminated the moment a dead position appears on the board.</p>
+
+					<p>Some basic endings are always dead positions; for example:</p>
+					<ul>
+						<li>king against king;</li>
+						<li>king against king and bishop;</li>
+						<li>king against king and knight.</li>
+					</ul>
+
+					<p>Blocked positions can arise in which progress is impossible for either side, such as the diagrammed position; these too are dead positions.</p>
+
+					<p>USCF rules, for games played under a time control that does not include delay or increment, allow draw claims for &quot;insufficient losing chances&quot;. For example, if each player has only a king and a knight, checkmate is only achievable with the co-operation of both players, even if it is not a dead position.</p>
+
+					<h4>Touch-move rule</h4>
+
+					<p>The touch-move rule is a fundamental principle in chess, ensuring that players commit to moves deliberated mentally, without physically experimenting on the board. According to this rule, a player who touches a piece with the intention of moving it must then move it if legally possible. This rule also applies to capturing: a player who touches an opponent's piece must capture it if a legal capture is available. Special considerations apply for castling and pawn promotion, reflecting their unique nature in the game.</p>
+
+					<p>A player who touches a piece to adjust its physical position within a square must first alert the opponent by saying J'adoube or &quot;I adjust&quot;. Once the game has started, only the player with the move may touch the pieces on the board.</p>
+
+					<h2>Create and Submit your Pull Request</h2>
+					<p>As noted in the <a href="https://github.com/mihaimoga/ChessCtrl/blob/main/CONTRIBUTING.md" target="_blank">Contributing Rules</a> for <em>ChessCtrl</em>, all Pull Requests need to be attached to a issue on GitHub. So the first step is to create an issue which requests that the functionality be improved (if it was already there) or added (if it was not yet there); in your issue, be sure to explain that you have the functionality definition ready, and will be submitting a Pull Request. The second step is to use the GitHub interface to create the Pull Request from your fork into the main repository. The final step is to wait for and respond to feedback from the developers as needed, until such time as your PR is accepted or rejected.</p>
+				</div>
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+	</body>
+</html>
