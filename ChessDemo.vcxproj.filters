@@ -158,11 +158,15 @@
     </None>
     <None Include="packages.config" />
     <None Include="AGENTS.md" />
+    <None Include="ChessCtrl.html" />
+    <None Include="ReleaseNotes.html" />
+    <None Include="SoftwareContentRegister.html" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\ChessDemo.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="ChessCtrl.png" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

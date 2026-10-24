@@ -251,10 +251,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="AGENTS.md" />
+    <None Include="ChessCtrl.html" />
     <None Include="packages.config" />
+    <None Include="ReleaseNotes.html" />
     <None Include="res\ChessDemo.rc2" />
+    <None Include="SoftwareContentRegister.html" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="ChessCtrl.png" />
     <Image Include="res\ChessDemo.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
