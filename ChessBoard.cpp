@@ -60,7 +60,12 @@ void ChessBoard::submitMove(const TCHAR* fromSquare, const TCHAR* toSquare)
 
 	Board* sandboxBoard = cloneBoard(_board);
 	Piece* capturedPiece = tryMoveAndReturnCaptured(sourceFileRank, destFileRank, sandboxBoard);
-	if (!pieceMoveKeepsKingSafe(_isWhiteTurn, piece, sourceFileRank, destFileRank, sandboxBoard)) return;
+	if (!pieceMoveKeepsKingSafe(_isWhiteTurn, piece, sourceFileRank, destFileRank, sandboxBoard))
+	{
+		delete capturedPiece;
+		deepCleanBoard(sandboxBoard);
+		return;
+	}
 
 	confirmMoveOnBoard(sourceFileRank, destFileRank, _board);
 

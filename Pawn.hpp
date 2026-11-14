@@ -27,7 +27,7 @@ public:
 	wstring toGraphics();
 
 private:
-	bool isAdjacentFile(wstring sourceFileRank, wstring destFileRank);
+	bool isAdjacentFile(const wstring& sourceFileRank, const wstring& destFileRank);
 public:
 	int Score(); // Stefan-Mihai Moga
 };

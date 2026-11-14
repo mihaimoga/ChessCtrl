@@ -71,13 +71,14 @@ int Pawn::isValidMove(wstring sourceFileRank, wstring destFileRank, map<wstring,
 			default: return ChessErrHandler::ILLEGAL_MOVE_PATTERN;
 		}
 
-		try
+		auto dest = board->find(destFileRank);
+		if (dest != board->end())
 		{
-			/* If no exception is thrown, a piece is occupying the destination
+			/* A piece is occupying the destination
 			   Which is undesirable regardless of its friendliness
 			   The if clause is simply to check which error number to return
 			*/
-			if (isFriendly(board->at(destFileRank)))
+			if (isFriendly(dest->second))
 			{
 				return ChessErrHandler::FRIENDLY_AT_DEST;
 			}
@@ -85,27 +86,21 @@ int Pawn::isValidMove(wstring sourceFileRank, wstring destFileRank, map<wstring,
 				return ChessErrHandler::PAWN_ILLEGAL_CAPTURE_PATTERN;
 			}
 		}
-		catch (const std::out_of_range& err) {
-			UNREFERENCED_PARAMETER(err);
-			// No piece at destination, expected to return CHESS_NO_ERROR
-		}
+		// No piece at destination, expected to return CHESS_NO_ERROR
 
 	}
 	else
 	{
-		try
+		if (rankAdvancement != 1 ||
+			!isAdjacentFile(sourceFileRank, destFileRank))
 		{
-			if (!(rankAdvancement == 1 &&
-				isAdjacentFile(sourceFileRank, destFileRank) &&
-				!isFriendly(board->at(destFileRank))))
-			{
-				return ChessErrHandler::ILLEGAL_MOVE_PATTERN;
-			}
+			return ChessErrHandler::ILLEGAL_MOVE_PATTERN;
 		}
-		catch (const std::out_of_range& err)
+
+		// Pawn cannot move diagonally if it is not capturing a rivalry piece
+		auto dest = board->find(destFileRank);
+		if (dest == board->end() || isFriendly(dest->second))
 		{
-			UNREFERENCED_PARAMETER(err);
-			// Pawn cannot move diagonally if it is not capturing a rivalry piece
 			return ChessErrHandler::ILLEGAL_MOVE_PATTERN;
 		}
 	}
@@ -136,7 +131,7 @@ wstring Pawn::toGraphics()
    pre-cond: args are valid file & rank representations of a different square
    post-cond: return true if absolute file difference of args is 1
 */
-bool Pawn::isAdjacentFile(wstring sourceFileRank, wstring destFileRank)
+bool Pawn::isAdjacentFile(const wstring& sourceFileRank, const wstring& destFileRank)
 {
 	TCHAR sourceFile = sourceFileRank.at(ChessInfo::FILE_INDEX);
 	TCHAR destFile = destFileRank.at(ChessInfo::FILE_INDEX);

@@ -63,15 +63,15 @@ public:
 protected:
 	bool isFriendly(Piece* that);
 
-	bool isSameFile(wstring sourceFileRank, wstring destFileRank);
-	bool isSameRank(wstring sourceFileRank, wstring destFileRank);
-	bool isSameDiagonal(wstring sourceFileRank, wstring destFileRank);
+	bool isSameFile(const wstring& sourceFileRank, const wstring& destFileRank);
+	bool isSameRank(const wstring& sourceFileRank, const wstring& destFileRank);
+	bool isSameDiagonal(const wstring& sourceFileRank, const wstring& destFileRank);
 
-	bool noVerticalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board);
-	bool noHorizontalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board);
-	bool noDiagonalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board);
+	bool noVerticalObstruction(const wstring& sourceFileRank, const wstring& destFileRank, map<wstring, Piece*>* board);
+	bool noHorizontalObstruction(const wstring& sourceFileRank, const wstring& destFileRank, map<wstring, Piece*>* board);
+	bool noDiagonalObstruction(const wstring& sourceFileRank, const wstring& destFileRank, map<wstring, Piece*>* board);
 
-	bool destExistFriendlyPiece(wstring destFileRank, map<wstring, Piece*>* board);
+	bool destExistFriendlyPiece(const wstring& destFileRank, map<wstring, Piece*>* board);
 
 public:
 	virtual int Score() = 0; // Stefan-Mihai Moga

@@ -71,6 +71,17 @@
 								<li>Removed compiled Release binaries from repository tracking.</li>
 							</ul>
 						</li>
+						<li>Version 1.03 (November 14<sup>th</sup>, 2026):
+							<ul>
+								<li>Optimized the computer player (<code>ComputerThreadProc</code>): a computer move now takes about 0.1 to 0.2 ms instead of about 200 to 270 ms (roughly 1,600 to 1,900 times faster in Release x64 benchmarks), and it chooses the same moves as before, except for the fix below.</li>
+								<li>Removed the exceptions the piece rules used to detect empty squares (<code>std::map::at()</code> replaced by <code>find()</code> in <code>Piece</code> and <code>Pawn</code>), passed square names by reference, and merged the duplicated White and Black searches into one shared search that no longer copies the board for moves that cannot be selected.</li>
+								<li>Fixed the game getting stuck when the computer chose a move that left its own king in check (for example capturing a pinned piece or not answering a check): the move was refused, the computer did not move and the game stayed on its turn. The computer now always plays a legal move when it has one.</li>
+								<li>Fixed a memory leak in <code>ChessBoard::submitMove</code>: the copy of the board used to test a move, and the piece captured in it, were not freed when the move was refused because it left the king in check.</li>
+								<li>Added the <code>ChessUnittests</code> project with 129 unit tests (Microsoft Native C++ Unit Test Framework) for the piece rules, the game rules (turns, check, checkmate, stalemate), the memory management of the board, and the computer player.</li>
+								<li>Added the <code>ChessBench</code> project, a console benchmark and equivalence harness for <code>ComputerThreadProc</code>; both new projects are part of the solution.</li>
+								<li>Updated <code>AGENTS.md</code> with the new projects, the build and test commands, and the benchmark procedure.</li>
+							</ul>
+						</li>
 					</ul>
 				</div>
 			</div>

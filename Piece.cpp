@@ -57,20 +57,20 @@ wstring Piece::playerToString()
    Post-cond.: return true if sourceFileRank and destFileRank is on the same
 			   file/ rank/ diagonal respectively
 */
-bool Piece::isSameFile(wstring sourceFileRank, wstring destFileRank)
+bool Piece::isSameFile(const wstring& sourceFileRank, const wstring& destFileRank)
 {
 	return sourceFileRank.at(ChessInfo::FILE_INDEX) ==
 		destFileRank.at(ChessInfo::FILE_INDEX);
 }
 
-bool Piece::isSameRank(wstring sourceFileRank, wstring destFileRank)
+bool Piece::isSameRank(const wstring& sourceFileRank, const wstring& destFileRank)
 {
 	return sourceFileRank.at(ChessInfo::RANK_INDEX) ==
 		destFileRank.at(ChessInfo::RANK_INDEX);
 
 }
 
-bool Piece::isSameDiagonal(wstring sourceFileRank, wstring destFileRank)
+bool Piece::isSameDiagonal(const wstring& sourceFileRank, const wstring& destFileRank)
 {
 	return abs(sourceFileRank.at(ChessInfo::FILE_INDEX) -
 		destFileRank.at(ChessInfo::FILE_INDEX)) ==
@@ -84,7 +84,7 @@ bool Piece::isSameDiagonal(wstring sourceFileRank, wstring destFileRank)
    Post-cond.: return true if there are no pieces on intermediate ranks
 			   on the board
 */
-bool Piece::noVerticalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)
+bool Piece::noVerticalObstruction(const wstring& sourceFileRank, const wstring& destFileRank, map<wstring, Piece*>* board)
 {
 
 	TCHAR sourceFile = sourceFileRank.at(ChessInfo::FILE_INDEX);
@@ -96,17 +96,12 @@ bool Piece::noVerticalObstruction(wstring sourceFileRank, wstring destFileRank, 
 	for (TCHAR i = lowRank + ChessInfo::EXCLUSIVE_SHIFT; i < highRank; i++)
 	{
 		wstring between({ sourceFile, i });
-		try
+		// find() instead of at(): an empty square is the common case and must not throw
+		if (board->find(between) != board->end())
 		{
-			auto temp = board->at(between);
-			UNREFERENCED_PARAMETER(temp);
 			return false;
 		}
-		catch (const std::out_of_range& err)
-		{
-			UNREFERENCED_PARAMETER(err);
-			// No piece for this file & rank, no action required
-		}
+		// No piece for this file & rank, no action required
 	}
 	return true;
 }
@@ -117,7 +112,7 @@ bool Piece::noVerticalObstruction(wstring sourceFileRank, wstring destFileRank, 
    Post-cond.: return true if there are no pieces on intermediate files
 			   on the board
 */
-bool Piece::noHorizontalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)
+bool Piece::noHorizontalObstruction(const wstring& sourceFileRank, const wstring& destFileRank, map<wstring, Piece*>* board)
 {
 
 	TCHAR sourceFile = sourceFileRank.at(ChessInfo::FILE_INDEX);
@@ -129,17 +124,11 @@ bool Piece::noHorizontalObstruction(wstring sourceFileRank, wstring destFileRank
 	for (TCHAR i = lowFile + ChessInfo::EXCLUSIVE_SHIFT; i < highFile; i++)
 	{
 		wstring between({ i, sourceRank });
-		try
+		if (board->find(between) != board->end())
 		{
-			auto temp = board->at(between);
-			UNREFERENCED_PARAMETER(temp);
 			return false;
 		}
-		catch (const std::out_of_range& err)
-		{
-			UNREFERENCED_PARAMETER(err);
-			// No piece for this file & rank, no action required
-		}
+		// No piece for this file & rank, no action required
 	}
 	return true;
 }
@@ -150,7 +139,7 @@ bool Piece::noHorizontalObstruction(wstring sourceFileRank, wstring destFileRank
    Post-cond.: return true if there are no pieces on intermediate files
 			   and ranks, which is on the same diagonal, on the board
 */
-bool Piece::noDiagonalObstruction(wstring sourceFileRank, wstring destFileRank, map<wstring, Piece*>* board)
+bool Piece::noDiagonalObstruction(const wstring& sourceFileRank, const wstring& destFileRank, map<wstring, Piece*>* board)
 {
 
 	TCHAR sourceFile = sourceFileRank.at(ChessInfo::FILE_INDEX);
@@ -176,17 +165,11 @@ bool Piece::noDiagonalObstruction(wstring sourceFileRank, wstring destFileRank, 
 			between = { (TCHAR)(lowFile + i), (TCHAR)(highRank - i) };
 		}
 
-		try
+		if (board->find(between) != board->end())
 		{
-			auto temp = board->at(between);
-			UNREFERENCED_PARAMETER(temp);
 			return false;
 		}
-		catch (const std::out_of_range& err)
-		{
-			UNREFERENCED_PARAMETER(err);
-			// No piece for this file & rank, no action required
-		}
+		// No piece for this file & rank, no action required
 	}
 	return true;
 }
@@ -196,21 +179,11 @@ bool Piece::noDiagonalObstruction(wstring sourceFileRank, wstring destFileRank, 
    Post-cond.: return true if piece on the dest file & rank is a friendly,
 			   false otherwise (rivalry on dest or empty square)
 */
-bool Piece::destExistFriendlyPiece(wstring destFileRank, map<wstring, Piece*>* board) {
+bool Piece::destExistFriendlyPiece(const wstring& destFileRank, map<wstring, Piece*>* board) {
 
-	try
-	{
-		if (isFriendly(board->at(destFileRank)))
-		{
-			return true;
-		}
-	}
-	catch (const std::out_of_range& err)
-	{
-		UNREFERENCED_PARAMETER(err);
-		// No piece for this file & rank, expect to return false
-	}
-	return false;
+	// No piece for this file & rank (end()), expect to return false
+	auto dest = board->find(destFileRank);
+	return dest != board->end() && isFriendly(dest->second);
 }
 
 int Piece::Score()
