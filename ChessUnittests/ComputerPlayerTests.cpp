@@ -2,6 +2,7 @@
 
 #include "pch.h"
 #include "TestSupport.hpp"
+#include "ChessSearch.hpp"
 
 #include <map>
 #include <set>
@@ -11,6 +12,7 @@ extern bool g_bThreadRunning;
 bool WhitePlayer_BacktrackingAlgorithm(const int nLevel, int& nScore, std::wstring& strMoveFrom, std::wstring& strMoveTo, Board* pBoard);
 bool BlackPlayer_BacktrackingAlgorithm(const int nLevel, int& nScore, std::wstring& strMoveFrom, std::wstring& strMoveTo, Board* pBoard);
 DWORD WINAPI ComputerThreadProc(LPVOID lpParam);
+bool BoardToPosition(Board* pBoard, const bool bWhiteToMove, ChessSearch::Position& position);
 
 using namespace ChessTests;
 
@@ -118,6 +120,82 @@ namespace
 		Assert::AreEqual(whiteToMove, game.IsWhiteTurn());
 		return Submit(game, from.c_str(), to.c_str());
 	}
+
+	// The moves of a set separated by spaces, like L"E2E3 E2E4"
+	std::wstring Join(const std::set<std::wstring>& moves)
+	{
+		std::wstring list;
+		for (const std::wstring& move : moves)
+		{
+			if (!list.empty())
+			{
+				list += L' ';
+			}
+			list += move;
+		}
+		return list;
+	}
+
+	/* The moves of the player to move that the game accepts, like L"E2E4". The game accepts a move that its piece finds
+	   valid and that keeps the king of the player safe, and it only tells by accepting it: every valid move is tried.
+	*/
+	std::set<std::wstring> AcceptedMoves(Board* board, bool whiteToMove)
+	{
+		const std::wstring placement = Placement(*board);
+		std::set<std::wstring> accepted;
+		for (Board::const_iterator it = board->begin(); it != board->end(); ++it)
+		{
+			if (it->second->isWhitePlayer() != whiteToMove)
+			{
+				continue;
+			}
+			for (wchar_t file = ChessInfo::MIN_FILE; file <= ChessInfo::MAX_FILE; ++file)
+			{
+				for (wchar_t rank = ChessInfo::MIN_RANK; rank <= ChessInfo::MAX_RANK; ++rank)
+				{
+					const std::wstring to = Square(file, rank);
+					if ((to != it->first) && (it->second->isValidMove(it->first, to, board) == VALID) &&
+						EngineAccepts(placement.c_str(), whiteToMove, it->first, to))
+					{
+						accepted.insert(it->first + to);
+					}
+				}
+			}
+		}
+		return accepted;
+	}
+
+	// True when the player who is not to move has its king attacked: a game never reaches such a position
+	bool OpponentIsInCheck(const ChessSearch::Position& position)
+	{
+		ChessSearch::Position passed(position);
+		ChessSearch::Undo undo;
+		passed.MakeNullMove(undo);
+		return passed.IsInCheck();
+	}
+
+	/* Compares the moves that the search generates in the position of a board with the moves that the game accepts. They
+	   have to be the same: a move that the game refuses would freeze it, and a move that the search does not have would
+	   never be played. Gives the moves.
+	*/
+	std::set<std::wstring> AssertSameMoves(Board* board, bool whiteToMove, const std::wstring& where)
+	{
+		ChessSearch::Position position;
+		Assert::IsTrue(BoardToPosition(board, whiteToMove, position), (where + L": the board cannot be searched").c_str());
+
+		std::set<std::wstring> generated;
+		for (const ChessSearch::Move& move : position.LegalMoves())
+		{
+			generated.insert(SearchMoveName(move));
+		}
+
+		const std::set<std::wstring> accepted = AcceptedMoves(board, whiteToMove);
+		if (generated != accepted)
+		{
+			Assert::Fail((where + L": the game accepts " + Join(accepted) + L" but the search generates " + Join(generated)).c_str());
+		}
+		return accepted;
+	}
 }
 
 namespace ChessUnittests
@@ -180,6 +258,41 @@ namespace ChessUnittests
 
 			Assert::AreEqual(firstFrom, secondFrom);
 			Assert::AreEqual(firstTo, secondTo);
+		}
+
+		TEST_METHOD(TheSearchFreesEveryPieceItCopies)
+		{
+			// The search tries the moves on copies of the board: they are counted pieces, which have to be freed
+			SearchFlag searching;
+			Position position(MIDDLE_GAME);
+			const int livePieces = LivePieces();
+			int score = 0;
+			std::wstring from, to;
+
+			Assert::IsTrue(WhitePlayer_BacktrackingAlgorithm(2, score, from, to, position.Get()));
+			Assert::IsTrue(BlackPlayer_BacktrackingAlgorithm(2, score, from, to, position.Get()));
+
+			Assert::AreEqual(livePieces, LivePieces());
+		}
+
+		TEST_METHOD(TheScoreIsInFavourOfThePlayerWhoIsAhead)
+		{
+			// One of the players has a queen more, and the other has nothing but its king
+			SearchFlag searching;
+			Position whiteAhead(L"4k3/8/8/8/8/8/8/3QK3");
+			Position blackAhead(L"3qk3/8/8/8/8/8/8/4K3");
+			int score = 0;
+			std::wstring from, to;
+
+			Assert::IsTrue(WhitePlayer_BacktrackingAlgorithm(2, score, from, to, whiteAhead.Get()));
+			Assert::IsTrue(score > 500, L"White is ahead and has the move");
+			Assert::IsTrue(BlackPlayer_BacktrackingAlgorithm(2, score, from, to, whiteAhead.Get()));
+			Assert::IsTrue(score < -500, L"White is ahead and Black has the move");
+
+			Assert::IsTrue(BlackPlayer_BacktrackingAlgorithm(2, score, from, to, blackAhead.Get()));
+			Assert::IsTrue(score > 500, L"Black is ahead and has the move");
+			Assert::IsTrue(WhitePlayer_BacktrackingAlgorithm(2, score, from, to, blackAhead.Get()));
+			Assert::IsTrue(score < -500, L"Black is ahead and White has the move");
 		}
 
 		TEST_METHOD(Black_TakesAPieceWhenItCan)
@@ -334,8 +447,9 @@ namespace ChessUnittests
 		TEST_METHOD(Black_TakesALegalPieceWhenTheCaptureOfAPinnedPieceIsNotLegal)
 		{
 			// The pinned bishop on E7 could take the queen on H4, the rook on A8 takes the rook on A1 instead
+			// (the knight on G8 protects the bishop, without it the queen takes the bishop with a checkmate)
 			SearchFlag searching;
-			const wchar_t* const placement = L"r3k3/4b3/8/8/7Q/8/8/R3R2K";
+			const wchar_t* const placement = L"r3k1n1/4b3/8/8/7Q/8/8/R3R2K";
 			Position position(placement);
 
 			for (int level = 1; level <= 2; ++level)
@@ -514,6 +628,171 @@ namespace ChessUnittests
 			Assert::AreEqual(L'b', LetterOn(after, L"E7"));
 			Assert::AreEqual(L'Q', LetterOn(after, L"H4"));
 			Assert::AreEqual(5, static_cast<int>(game._board->size()));
+		}
+	};
+
+	TEST_CLASS(ComputerBoardTests)
+	{
+	public:
+		TEST_METHOD(ABoardIsCopiedSquareBySquare)
+		{
+			const wchar_t* const placements[] =
+			{
+				INITIAL_POSITION,
+				MIDDLE_GAME,
+				L"r3k1n1/4b3/8/8/7Q/8/8/R3R2K",
+				L"4k3/P5P1/8/8/8/8/p5p1/4K3",
+				L"8/8/8/8/8/8/8/4K3",
+			};
+			for (const wchar_t* placement : placements)
+			{
+				for (int side = 0; side < 2; ++side)
+				{
+					const bool whiteToMove = (side == 0);
+					const std::wstring message = std::wstring(L"Position ") + placement + (whiteToMove ? L" with White to move" : L" with Black to move");
+					Position board(placement);
+					ChessSearch::Position copy;
+
+					Assert::IsTrue(BoardToPosition(board.Get(), whiteToMove, copy), message.c_str(), LINE_INFO());
+					Assert::IsTrue(SameSearchPosition(ParseSearchPosition(placement, whiteToMove), copy), message.c_str(), LINE_INFO());
+				}
+			}
+		}
+
+		TEST_METHOD(ACopyReplacesWhatThePositionHeld)
+		{
+			// The same object is used again and again: nothing of the previous board may stay in it
+			Position first(INITIAL_POSITION);
+			Position second(L"4k3/8/8/8/8/8/8/4K3");
+			ChessSearch::Position copy;
+
+			Assert::IsTrue(BoardToPosition(first.Get(), true, copy));
+			Assert::IsTrue(BoardToPosition(second.Get(), false, copy));
+
+			Assert::IsTrue(SameSearchPosition(ParseSearchPosition(L"4k3/8/8/8/8/8/8/4K3", false), copy));
+		}
+
+		TEST_METHOD(ABoardWithSomethingThatIsNotAChessPieceIsRefused)
+		{
+			Position board(L"4k3/8/8/8/8/8/8/4K3");
+			board.Get()->insert({ L"D4", new EmptyPiece(true) });
+			ChessSearch::Position copy;
+
+			Assert::IsFalse(BoardToPosition(board.Get(), true, copy));
+		}
+
+		TEST_METHOD(ABoardWithAPieceOffTheBoardIsRefused)
+		{
+			Position board(L"4k3/8/8/8/8/8/8/4K3");
+			board.Get()->insert({ L"D9", NewPiece(L'P') });
+			ChessSearch::Position copy;
+
+			Assert::IsFalse(BoardToPosition(board.Get(), true, copy));
+		}
+	};
+
+	TEST_CLASS(ComputerMovesTests)
+	{
+	public:
+		TEST_METHOD(TheMovesOfSpecialPositionsAreTheMovesOfTheGame)
+		{
+			const wchar_t* const placements[] =
+			{
+				INITIAL_POSITION,
+				MIDDLE_GAME,
+
+				// Pawns about to reach the last rank, and pawns that have reached it
+				L"4k3/P5P1/8/8/8/8/p5p1/4K3",
+				L"P3k3/8/8/8/8/8/8/p3K3",
+
+				// The king and the rooks where they could castle, and pawns where a capture en passant could be
+				L"r3k2r/8/8/8/8/8/8/R3K2R",
+				L"4k3/8/8/3pP3/8/8/8/4K3",
+
+				// Pinned pieces, a rook next to the king and a check by a knight
+				L"4k3/4r3/8/8/8/8/4N3/4K3",
+				L"4k3/8/8/8/1b6/8/3N4/4K3",
+				L"r3k1n1/4b3/8/8/7Q/8/8/R3R2K",
+				L"4k3/8/8/8/8/8/4r3/R3K3",
+				L"4k3/8/8/8/8/3n4/8/R3K3",
+				L"8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8",
+
+				// A checkmate and a stalemate
+				L"rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR",
+				L"k7/2Q5/1K6/8/8/8/8/8",
+			};
+
+			int movesCompared = 0;
+			for (const wchar_t* placement : placements)
+			{
+				for (int side = 0; side < 2; ++side)
+				{
+					const bool whiteToMove = (side == 0);
+					Position board(placement);
+					ChessSearch::Position position;
+					Assert::IsTrue(BoardToPosition(board.Get(), whiteToMove, position));
+					if (OpponentIsInCheck(position))
+					{
+						continue;
+					}
+
+					const std::wstring where = std::wstring(L"Position ") + placement + (whiteToMove ? L" with White to move" : L" with Black to move");
+					movesCompared += static_cast<int>(AssertSameMoves(board.Get(), whiteToMove, where).size());
+				}
+			}
+			Assert::IsTrue(movesCompared > 200, L"The positions have moves to compare");
+		}
+
+		TEST_METHOD(TheMovesOfRandomGamesAreTheMovesOfTheGame)
+		{
+			// The games are played at random with a generator that gives the same games every time
+			uint32_t state = 2026;
+			int movesCompared = 0;
+			for (int number = 1; number <= 3; ++number)
+			{
+				ChessBoard game;
+				for (int ply = 1; ply <= 40; ++ply)
+				{
+					const std::wstring where = L"Game " + std::to_wstring(number) + L" before ply " + std::to_wstring(ply) + L" in " + Placement(*game._board);
+					const std::set<std::wstring> moves = AssertSameMoves(game._board, game.IsWhiteTurn(), where);
+					if (moves.empty())
+					{
+						Assert::IsTrue(game.HasGameEnded(), (where + L" has no move and the game goes on").c_str());
+						break;
+					}
+					movesCompared += static_cast<int>(moves.size());
+
+					state = state * 1664525u + 1013904223u;
+					std::set<std::wstring>::const_iterator chosen = moves.begin();
+					std::advance(chosen, static_cast<std::ptrdiff_t>((state >> 16) % moves.size()));
+					Play(game, chosen->substr(0, 2).c_str(), chosen->substr(2, 2).c_str());
+				}
+			}
+			Assert::IsTrue(movesCompared > 1000, L"The games have moves to compare");
+		}
+	};
+
+	TEST_CLASS(ComputerGameTests)
+	{
+	public:
+		TEST_METHOD(TwoComputerPlayersPlayAGameOfMovesTheGameAccepts)
+		{
+			SearchFlag searching;
+			ChessBoard game;
+			for (int ply = 1; (ply <= 40) && !game.HasGameEnded(); ++ply)
+			{
+				const bool whiteToMove = game.IsWhiteTurn();
+				const std::wstring where = L"Ply " + std::to_wstring(ply) + (whiteToMove ? L" of White in " : L" of Black in ") + Placement(*game._board);
+				int score = 0;
+				std::wstring from, to;
+
+				const bool found = whiteToMove ? WhitePlayer_BacktrackingAlgorithm(3, score, from, to, game._board) :
+					BlackPlayer_BacktrackingAlgorithm(3, score, from, to, game._board);
+
+				// A game that has not ended has a move to play, and Play() fails when the game refuses it
+				Assert::IsTrue(found, (where + L" has no move").c_str());
+				Play(game, from.c_str(), to.c_str());
+			}
 		}
 	};
 }

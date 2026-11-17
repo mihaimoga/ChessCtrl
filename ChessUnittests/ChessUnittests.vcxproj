@@ -154,6 +154,7 @@
 	<ClCompile Include="$(SrcDir)\Bishop.cpp" />
 	<ClCompile Include="$(SrcDir)\ChessBoard.cpp" />
 	<ClCompile Include="$(SrcDir)\ChessErrHandler.cpp" />
+	<ClCompile Include="$(SrcDir)\ChessSearch.cpp" />
 	<ClCompile Include="$(SrcDir)\ComputerPlayer.cpp" />
 	<ClCompile Include="$(SrcDir)\EmptyPiece.cpp" />
 	<ClCompile Include="$(SrcDir)\King.cpp" />
@@ -166,6 +167,7 @@
 	<ClCompile Include="$(SrcDir)\Queen.cpp" />
 	<ClCompile Include="$(SrcDir)\Rook.cpp" />
 	<ClCompile Include="ChessBoardTests.cpp" />
+	<ClCompile Include="ChessSearchTests.cpp" />
 	<ClCompile Include="ComputerPlayerTests.cpp" />
 	<ClCompile Include="KingSafetyTests.cpp" />
 	<ClCompile Include="PawnTests.cpp" />

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "ChessBoard.hpp"
+#include "ChessSearch.hpp"
 #include "CppUnitTest.h"
 
 #include <cwctype>
@@ -364,5 +365,87 @@ namespace ChessTests
 		Assert::IsTrue(game.IsWhiteTurn() == wasWhiteTurn, (move + L" was accepted, it passed the turn").c_str(), pLineInfo);
 		Assert::AreEqual(before, Placement(*game._board), (move + L" changed the position").c_str(), pLineInfo);
 		Assert::IsTrue(game.HasGameEnded() == hadEnded, (move + L" changed the end of the game").c_str(), pLineInfo);
+	}
+
+	// The name of a square of the search, like L"E2": the search numbers the squares from A8 (0) to H1 (63)
+	inline std::wstring SearchSquareName(int square)
+	{
+		return Square(static_cast<wchar_t>(ChessInfo::MIN_FILE + (square % FILES_PER_RANK)),
+			static_cast<wchar_t>(ChessInfo::MAX_RANK - (square / FILES_PER_RANK)));
+	}
+
+	inline int SearchSquareOf(const wchar_t* name)
+	{
+		return (ChessInfo::MAX_RANK - name[1]) * FILES_PER_RANK + (name[0] - ChessInfo::MIN_FILE);
+	}
+
+	// A move of the search written as the square it starts from and the one it ends on, like L"E2E4"
+	inline std::wstring SearchMoveName(const ChessSearch::Move& move)
+	{
+		return SearchSquareName(move.nFrom) + SearchSquareName(move.nTo);
+	}
+
+	inline ChessSearch::Move SearchMoveOf(const wchar_t* name)
+	{
+		ChessSearch::Move move;
+		move.nFrom = SearchSquareOf(name);
+		move.nTo = SearchSquareOf(name + 2);
+		return move;
+	}
+
+	// The position the search works on for a placement: the pieces that ParseBoard() puts on a board, and the player to move
+	inline ChessSearch::Position ParseSearchPosition(const wchar_t* placement, bool whiteToMove)
+	{
+		const std::wstring description = std::wstring(L"Invalid position: ") + placement;
+		ChessSearch::Position position;
+		int square = 0;
+		for (const wchar_t* pLetter = placement; *pLetter != L'\0'; ++pLetter)
+		{
+			const wchar_t letter = *pLetter;
+			if (letter == L'/')
+			{
+				continue;
+			}
+			if ((letter >= L'1') && (letter <= L'8'))
+			{
+				square += letter - L'0';
+				continue;
+			}
+
+			int kind = ChessSearch::NO_PIECE;
+			switch (std::towlower(letter))
+			{
+				case L'p': kind = ChessSearch::PAWN; break;
+				case L'n': kind = ChessSearch::KNIGHT; break;
+				case L'b': kind = ChessSearch::BISHOP; break;
+				case L'r': kind = ChessSearch::ROOK; break;
+				case L'q': kind = ChessSearch::QUEEN; break;
+				case L'k': kind = ChessSearch::KING; break;
+				default: break;
+			}
+			Assert::IsTrue((kind != ChessSearch::NO_PIECE) && (square < ChessSearch::SQUARE_COUNT), description.c_str());
+			position.Put(square, kind, std::iswupper(letter) != 0);
+			++square;
+		}
+		Assert::AreEqual(ChessSearch::SQUARE_COUNT, square, description.c_str());
+		position.SetWhiteToMove(whiteToMove);
+		return position;
+	}
+
+	// True when two positions have the same piece on every square, the same player to move and so the same hash
+	inline bool SameSearchPosition(const ChessSearch::Position& first, const ChessSearch::Position& second)
+	{
+		if ((first.Hash() != second.Hash()) || (first.IsWhiteToMove() != second.IsWhiteToMove()))
+		{
+			return false;
+		}
+		for (int square = 0; square < ChessSearch::SQUARE_COUNT; ++square)
+		{
+			if (first.PieceAt(square) != second.PieceAt(square))
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 }

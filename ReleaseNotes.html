@@ -82,6 +82,18 @@
 								<li>Updated <code>AGENTS.md</code> with the new projects, the build and test commands, and the benchmark procedure.</li>
 							</ul>
 						</li>
+						<li>Version 1.04 (TBD):
+							<ul>
+								<li>Stronger computer player: the greedy search was replaced by a chess engine (<code>ChessSearch.cpp</code> and <code>ChessSearch.hpp</code>) that works on a compact copy of the board and looks 10 plies ahead (iterative deepening, principal variation search with alpha-beta pruning, transposition table, quiescence search, null-move pruning, late move reductions, check extensions, killer and history move ordering). It evaluates the material, the position of the pieces, the bishop pair, the pawn structure, the rooks on open files and the safety of the kings. <code>ComputerPlayer.cpp</code> keeps its functions and only copies the board of the game to the engine.</li>
+								<li>In matches played from different openings the new computer player won 80 of 80 games against the previous one (40 against each of its two search levels, which played the same moves), and a search depth of 10 won 17, drew 14 and lost 1 of 32 games against a depth of 8.</li>
+								<li>A computer move now takes about 0.2 to 0.3 s on average and less than 0.8 s at most in Release x64 benchmarks, instead of 0.1 to 0.2 ms: this is the price of looking ahead. Every search stops after 2,000,000 positions at most. It counts positions and not time, so the same position always gets the same move, on any computer and in any build, and closing the application still stops the computer at once.</li>
+								<li>The computer does not go round in circles when it is winning: a position that comes again in the line it examines counts as a draw. It also knows how to drive a bare king to the edge of the board, and to the corner of the color of its bishop when it has a bishop and a knight, so it checkmates with two bishops, and in most positions with a bishop and a knight.</li>
+								<li>The rules of the game are unchanged: the <code>rules</code> mode of <code>ChessBench</code> gives the same result as in version 1.03.</li>
+								<li><code>ChessUnittests</code> now has 187 unit tests (129 before) that also cover the move generator of the new engine against the rules of the game, its evaluation and search, whole games between two computer players, and the copy of the board. The position of the test <code>Black_TakesALegalPieceWhenTheCaptureOfAPinnedPieceIsNotLegal</code> was changed because the stronger search saw that the move it expected loses to a checkmate: a knight now protects the pinned bishop.</li>
+								<li>The <code>ChessBench</code> project builds the new engine as well; its <code>ChessSearch.cpp</code> item is left out when <code>/p:SrcDir</code> points at an older version of the engine that does not have the file.</li>
+								<li>Updated <code>AGENTS.md</code> and <code>README.md</code> with the new engine files, the search limits and the benchmark procedure.</li>
+							</ul>
+						</li>
 					</ul>
 				</div>
 			</div>

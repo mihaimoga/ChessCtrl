@@ -16,10 +16,12 @@ ChessCtrl. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*/
 #include "pch.h"
 #include "ChessBoard.hpp"
 #include "ChessCtrl.h"
+#include "ChessSearch.hpp"
 
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include <vector>
 
 bool WaitWithMessageLoop(HANDLE hEvent, DWORD dwTimeout)
 {
@@ -165,135 +167,127 @@ static bool IsLegalMove(const bool bWhitePlayer, const wstring& strMoveFrom, con
 
 bool g_bThreadRunning = true;
 
-/* Search shared by WhitePlayer_BacktrackingAlgorithm() and BlackPlayer_BacktrackingAlgorithm(), which only differ in
-   the player and in the level handling: White always recurses with the next level (nLevel - 1), while Black keeps
-   nLevel and only recurses as long as (nLevel - 1) > 0, otherwise it just scores the piece captured by the move.
-
-   A move replaces the best one when it scores higher than the best move of the same piece or when no move has been
-   selected yet, and nScore is set once per piece that can move. The score of the recursive search is only used by a
-   move that becomes the best one, so the (expensive) recursion is skipped for every other move: revisit this if the
-   use of that score ever changes.
-
-   With bLegalOnly only the moves that keep the king of the player safe can be selected (the search of the next
-   moves never needs it: it does not choose the move that is played).
+/* How hard the computer player thinks: the depth of its search in plies, and the number of positions after which every
+   search stops, whatever its depth is. The search counts positions and not time, so a position always gives the same
+   move, on any computer and in any build.
 */
-static bool SearchBestMove(const bool bWhitePlayer, const int nLevel, int& nScore, wstring& strMoveFrom, wstring& strMoveTo, Board* pBoard, const bool bLegalOnly)
+static constexpr int COMPUTER_LEVEL = 10;
+static constexpr uint64_t SEARCH_MAX_NODES = 2000000;
+
+/* Copies a board in the representation of the search (see ChessSearch.hpp), which never touches the board of the game:
+   it is shown on the screen while the computer player thinks. False if the board holds something the search does not
+   know, a square that is not on the board or a piece that is not a chess piece.
+*/
+bool BoardToPosition(Board* pBoard, const bool bWhiteToMove, ChessSearch::Position& position)
+{
+	position.Clear();
+	position.SetWhiteToMove(bWhiteToMove);
+	for (Board::iterator it = pBoard->begin(); it != pBoard->end(); it++)
+	{
+		Piece* pPiece = it->second;
+		int nKind = ChessSearch::NO_PIECE;
+		if (dynamic_cast<Pawn*>(pPiece) != nullptr)
+		{
+			nKind = ChessSearch::PAWN;
+		}
+		else if (dynamic_cast<Knight*>(pPiece) != nullptr)
+		{
+			nKind = ChessSearch::KNIGHT;
+		}
+		else if (dynamic_cast<Bishop*>(pPiece) != nullptr)
+		{
+			nKind = ChessSearch::BISHOP;
+		}
+		else if (dynamic_cast<Rook*>(pPiece) != nullptr)
+		{
+			nKind = ChessSearch::ROOK;
+		}
+		else if (dynamic_cast<Queen*>(pPiece) != nullptr)
+		{
+			nKind = ChessSearch::QUEEN;
+		}
+		else if (dynamic_cast<King*>(pPiece) != nullptr)
+		{
+			nKind = ChessSearch::KING;
+		}
+
+		const int nSquare = GetSquareNumber(it->first);
+		if ((nKind == ChessSearch::NO_PIECE) || (nSquare < 0))
+		{
+			return false;
+		}
+		position.Put(nSquare, nKind, pPiece->isWhitePlayer());
+	}
+	return true;
+}
+
+/* Search shared by WhitePlayer_BacktrackingAlgorithm() and BlackPlayer_BacktrackingAlgorithm(), which only differ in
+   the player: the best move of the player, searched nLevel plies deep (ChessSearch::FindBestMove() deepens the search
+   one ply at a time, so the best move of the shallower searches is kept if the search is stopped). nScore is the value
+   of the move for the player, in centipawns, and it is left alone when there is no move.
+
+   ChessBoard::submitMove() has to accept the move, otherwise the player would never move: the search only chooses
+   among the moves that keep the king of the player safe, and among them the ones that the engine accepts as well, so
+   it gives no move only when the player has none (checkmate or stalemate), when the game is stopped or when the board
+   cannot be searched.
+*/
+static bool SearchMove(const bool bWhitePlayer, const int nLevel, int& nScore, wstring& strMoveFrom, wstring& strMoveTo, Board* pBoard)
 {
 	strMoveFrom.clear();
 	strMoveTo.clear();
-
-	const std::array<wstring, SQUARE_COUNT>& squareNames = GetSquareNames();
-
-	// One pass over the board instead of looking up every square (an empty square is a null pointer)
-	Piece* squares[SQUARE_COUNT] = {};
-	for (Board::iterator it = pBoard->begin(); it != pBoard->end(); it++)
-	{
-		const int nSquare = GetSquareNumber(it->first);
-		if (nSquare >= 0)
-		{
-			squares[nSquare] = it->second;
-		}
-	}
-
-	int pieceSquares[SQUARE_COUNT];
-	int nPieces = 0;
-	for (int nSquare = 0; nSquare < SQUARE_COUNT; nSquare++)
-	{
-		if ((squares[nSquare] != nullptr) && (squares[nSquare]->isWhitePlayer() == bWhitePlayer))
-		{
-			pieceSquares[nPieces++] = nSquare;
-		}
-	}
-
-	const bool bRecursive = bWhitePlayer || ((nLevel - 1) > 0);
-	const int nNextLevel = bWhitePlayer ? (nLevel - 1) : nLevel;
-
-	for (int nPiece = 0; g_bThreadRunning && (nPiece < nPieces); nPiece++)
-	{
-		const int nSquareFrom = pieceSquares[nPiece];
-		const wstring& strSquareFrom = squareNames[nSquareFrom];
-		Piece* pPiece = squares[nSquareFrom];
-
-		int moveSquares[SQUARE_COUNT];
-		int nMoves = 0;
-		for (int nSquare = 0; nSquare < SQUARE_COUNT; nSquare++)
-		{
-			if ((nSquare != nSquareFrom) &&
-				(ChessErrHandler::CHESS_NO_ERROR == pPiece->isValidMove(strSquareFrom, squareNames[nSquare], pBoard)))
-			{
-				moveSquares[nMoves++] = nSquare;
-			}
-		}
-
-		if (nMoves > 0)
-		{
-			int nBestScore = 0, nRecursiveScore = 0;
-			for (int nMove = 0; g_bThreadRunning && (nMove < nMoves); nMove++)
-			{
-				const wstring& strSquareTo = squareNames[moveSquares[nMove]];
-				Piece* pDestPiece = squares[moveSquares[nMove]];
-				int nPieceScore = 0;
-				if (pDestPiece != nullptr)
-				{
-					nPieceScore = bWhitePlayer ? -pDestPiece->Score() : pDestPiece->Score();
-					if (!bRecursive && pDestPiece->isWhitePlayer())
-					{
-						TRACE(_T("piece captured!"));
-					}
-				}
-				if ((nPieceScore > nBestScore) || (strMoveFrom.empty() || strMoveTo.empty()))
-				{
-					if (bLegalOnly && !IsLegalMove(bWhitePlayer, strSquareFrom, strSquareTo, pBoard))
-					{
-						continue;
-					}
-					int nChildScore = 0;
-					if (bRecursive)
-					{
-						Board* pClone = CloneBoard(pBoard);
-						Piece* capturedPiece = TryMoveAndReturnCaptured(strSquareFrom, strSquareTo, pClone);
-						wstring strTempFrom, strTempTo;
-						SearchBestMove(!bWhitePlayer, nNextLevel, nChildScore, strTempFrom, strTempTo, pClone, false);
-						delete capturedPiece;
-						CleanBoard(pClone);
-					}
-					nBestScore = nPieceScore;
-					nRecursiveScore = nChildScore;
-					strMoveFrom = strSquareFrom;
-					strMoveTo = strSquareTo;
-				}
-			}
-			nScore = nBestScore + nRecursiveScore;
-		}
-	}
-	return (!strMoveFrom.empty() && !strMoveTo.empty());
-}
-
-/* The move a player plays, which ChessBoard::submitMove() has to accept. The search does not look at the king, so its best
-   move can leave the king of the player in check (for example the capture of a pinned piece): such a move is refused and
-   the player would never move, then the best of the moves that keep the king safe is searched.
-*/
-static bool SearchLegalMove(const bool bWhitePlayer, const int nLevel, int& nScore, wstring& strMoveFrom, wstring& strMoveTo, Board* pBoard)
-{
-	if (!SearchBestMove(bWhitePlayer, nLevel, nScore, strMoveFrom, strMoveTo, pBoard, false))
+	if (!g_bThreadRunning)
 	{
 		return false;
 	}
-	if (IsLegalMove(bWhitePlayer, strMoveFrom, strMoveTo, pBoard))
+
+	ChessSearch::Position position;
+	if (!BoardToPosition(pBoard, bWhitePlayer, position))
 	{
-		return true;
+		return false;
 	}
-	return SearchBestMove(bWhitePlayer, nLevel, nScore, strMoveFrom, strMoveTo, pBoard, true);
+
+	const std::array<wstring, SQUARE_COUNT>& squareNames = GetSquareNames();
+	std::vector<ChessSearch::Move> moves;
+	for (const ChessSearch::Move& move : position.LegalMoves())
+	{
+		const wstring& strSquareFrom = squareNames[move.nFrom];
+		const wstring& strSquareTo = squareNames[move.nTo];
+		Board::iterator it = pBoard->find(strSquareFrom);
+		if ((it != pBoard->end()) && (it->second->isWhitePlayer() == bWhitePlayer) &&
+			(ChessErrHandler::CHESS_NO_ERROR == it->second->isValidMove(strSquareFrom, strSquareTo, pBoard)) &&
+			IsLegalMove(bWhitePlayer, strSquareFrom, strSquareTo, pBoard))
+		{
+			moves.push_back(move);
+		}
+	}
+	if (moves.empty())
+	{
+		return false;
+	}
+
+	ChessSearch::Limits limits;
+	limits.nMaxDepth = nLevel;
+	limits.nMaxNodes = SEARCH_MAX_NODES;
+	limits.pbContinue = &g_bThreadRunning;
+	const ChessSearch::Result result = ChessSearch::FindBestMove(position, moves, limits);
+	if (!result.bFound)
+	{
+		return false;
+	}
+	strMoveFrom = squareNames[result.move.nFrom];
+	strMoveTo = squareNames[result.move.nTo];
+	nScore = result.nScore;
+	return true;
 }
 
 bool WhitePlayer_BacktrackingAlgorithm(const int nLevel, int& nScore, wstring& strMoveFrom, wstring& strMoveTo, Board* pBoard)
 {
-	return SearchLegalMove(true, nLevel, nScore, strMoveFrom, strMoveTo, pBoard);
+	return SearchMove(true, nLevel, nScore, strMoveFrom, strMoveTo, pBoard);
 }
 
 bool BlackPlayer_BacktrackingAlgorithm(const int nLevel, int& nScore, wstring& strMoveFrom, wstring& strMoveTo, Board* pBoard)
 {
-	return SearchLegalMove(false, nLevel, nScore, strMoveFrom, strMoveTo, pBoard);
+	return SearchMove(false, nLevel, nScore, strMoveFrom, strMoveTo, pBoard);
 }
 
 DWORD WINAPI ComputerThreadProc(LPVOID lpParam)
@@ -314,7 +308,7 @@ DWORD WINAPI ComputerThreadProc(LPVOID lpParam)
 
 		int nScore = 0;
 		wstring strBestMoveFrom, strBestMoveTo;
-		if (BlackPlayer_BacktrackingAlgorithm(2, nScore, strBestMoveFrom, strBestMoveTo, pChessBoard->_board))
+		if (BlackPlayer_BacktrackingAlgorithm(COMPUTER_LEVEL, nScore, strBestMoveFrom, strBestMoveTo, pChessBoard->_board))
 		{
 			try
 			{ 

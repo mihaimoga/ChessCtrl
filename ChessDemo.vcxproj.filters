@@ -87,6 +87,9 @@
     <ClInclude Include="Messages.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ChessSearch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChessDemo.cpp">
@@ -144,6 +147,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="WebBrowserDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChessSearch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

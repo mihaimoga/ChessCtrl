@@ -27,7 +27,7 @@
 - `Board* cloneBoard(Board* board)`: deep clone the given board - including all the Piece within the map.
 - `void deepCleanBoard(Board* board)`: deep clean the given board, free all containing Piece's memory and itself.
 - `bool showMoveAndCheckIfGameCanContinue(Piece* piece, wstring sourceFileRank, Piece* capturedPiece, wstring destFileRank, bool isWhiteTurn, Board* board)`: Printing methods, in both text and graphics, on stdout.
-- `void ComputerPlayer()`: implements the Backtracking algorithm for computer's Black pieces move, if enabled.
+- `void ComputerPlayer()`: plays the move of the computer's Black pieces, if enabled: it starts a thread that copies the board to a `ChessSearch::Position` and plays the best move that `ChessSearch::FindBestMove()` finds (an iterative deepening alpha-beta search, 10 plies deep and at most 2,000,000 positions per move).
 
 `ChessBoard` class includes the following classes:
 
@@ -46,7 +46,7 @@
 - `wstring playerToString()`: return wstring rep. of the piece's player.
 - `wstring toString()`: returns the wstring rep. of the piece.
 - `wstring toGraphics()`: returns graphical rep. of the piece.
-- `int Score()`: return the score of the piece (used by Backtracking algorithm to perform the computer move).
+- `int Score()`: return the score of the piece (the search of the computer player has its own values, in centipawns, in `ChessSearch.cpp`).
 
 And it implements the following functions:
 
