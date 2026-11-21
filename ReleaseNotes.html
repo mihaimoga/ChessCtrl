@@ -82,7 +82,7 @@
 								<li>Updated <code>AGENTS.md</code> with the new projects, the build and test commands, and the benchmark procedure.</li>
 							</ul>
 						</li>
-						<li>Version 1.04 (TBD):
+						<li>Version 1.04 (November 21<sup>st</sup>, 2026):
 							<ul>
 								<li>Stronger computer player: the greedy search was replaced by a chess engine (<code>ChessSearch.cpp</code> and <code>ChessSearch.hpp</code>) that works on a compact copy of the board and looks 10 plies ahead (iterative deepening, principal variation search with alpha-beta pruning, transposition table, quiescence search, null-move pruning, late move reductions, check extensions, killer and history move ordering). It evaluates the material, the position of the pieces, the bishop pair, the pawn structure, the rooks on open files and the safety of the kings. <code>ComputerPlayer.cpp</code> keeps its functions and only copies the board of the game to the engine.</li>
 								<li>In matches played from different openings the new computer player won 80 of 80 games against the previous one (40 against each of its two search levels, which played the same moves), and a search depth of 10 won 17, drew 14 and lost 1 of 32 games against a depth of 8.</li>

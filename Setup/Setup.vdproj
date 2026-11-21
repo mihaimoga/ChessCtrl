@@ -35,13 +35,13 @@
         "Entry"
         {
         "MsmKey" = "8:_4F66698B7A8DFBB86131A084EFAF027A"
-        "OwnerKey" = "8:_8E08703F8EE44EF5B38A6FD4119B62DB"
+        "OwnerKey" = "8:_591433063ACD411592A94DFDCC065861"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_4F66698B7A8DFBB86131A084EFAF027A"
-        "OwnerKey" = "8:_591433063ACD411592A94DFDCC065861"
+        "OwnerKey" = "8:_8E08703F8EE44EF5B38A6FD4119B62DB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -71,13 +71,13 @@
         "Entry"
         {
         "MsmKey" = "8:_6A39850518DA0468FA1CFD6F648FD47A"
-        "OwnerKey" = "8:_8E08703F8EE44EF5B38A6FD4119B62DB"
+        "OwnerKey" = "8:_591433063ACD411592A94DFDCC065861"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_6A39850518DA0468FA1CFD6F648FD47A"
-        "OwnerKey" = "8:_591433063ACD411592A94DFDCC065861"
+        "OwnerKey" = "8:_8E08703F8EE44EF5B38A6FD4119B62DB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -101,13 +101,13 @@
         "Entry"
         {
         "MsmKey" = "8:_B30BDD306632652921B0AA22606DBD76"
-        "OwnerKey" = "8:_8E08703F8EE44EF5B38A6FD4119B62DB"
+        "OwnerKey" = "8:_591433063ACD411592A94DFDCC065861"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_B30BDD306632652921B0AA22606DBD76"
-        "OwnerKey" = "8:_591433063ACD411592A94DFDCC065861"
+        "OwnerKey" = "8:_8E08703F8EE44EF5B38A6FD4119B62DB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -125,13 +125,13 @@
         "Entry"
         {
         "MsmKey" = "8:_C71D74C928A768B6CFFE325AEC85E98E"
-        "OwnerKey" = "8:_8E08703F8EE44EF5B38A6FD4119B62DB"
+        "OwnerKey" = "8:_591433063ACD411592A94DFDCC065861"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_C71D74C928A768B6CFFE325AEC85E98E"
-        "OwnerKey" = "8:_591433063ACD411592A94DFDCC065861"
+        "OwnerKey" = "8:_8E08703F8EE44EF5B38A6FD4119B62DB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -161,13 +161,13 @@
         "Entry"
         {
         "MsmKey" = "8:_FC039509A99DE5D5D2709A88347C7425"
-        "OwnerKey" = "8:_8E08703F8EE44EF5B38A6FD4119B62DB"
+        "OwnerKey" = "8:_591433063ACD411592A94DFDCC065861"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_FC039509A99DE5D5D2709A88347C7425"
-        "OwnerKey" = "8:_591433063ACD411592A94DFDCC065861"
+        "OwnerKey" = "8:_8E08703F8EE44EF5B38A6FD4119B62DB"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -195,6 +195,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -565,15 +573,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ChessCtrl"
-        "ProductCode" = "8:{E5292B85-A310-4F49-AEC7-850F9B29FEFF}"
-        "PackageCode" = "8:{3BEBD3F3-CE72-49FA-BCB3-7A994AFC2768}"
+        "ProductCode" = "8:{A23386CC-6C7D-4F2B-9784-BC66A0C18238}"
+        "PackageCode" = "8:{B0FEE001-3318-4021-9BF4-565280BE3DAD}"
         "UpgradeCode" = "8:{70943442-3351-4856-AD43-DF0822CDE4BB}"
         "AspNetVersion" = "8:"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:1.03"
+        "ProductVersion" = "8:1.04"
         "Manufacturer" = "8:Stefan-Mihai MOGA"
         "ARPHELPTELEPHONE" = "8:+40745497982"
         "ARPHELPLINK" = "8:https://www.moga.doctor/"
