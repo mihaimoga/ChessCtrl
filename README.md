@@ -205,6 +205,55 @@ The touch-move rule is a fundamental principle in chess, ensuring that players c
 
 A player who touches a piece to adjust its physical position within a square must first alert the opponent by saying _J'adoube_ or "I adjust". Once the game has started, only the player with the move may touch the pieces on the board.
 
+## Roadmap
+
+This roadmap shows where the development of _ChessCtrl_ goes after version 1.04, which plays games of chess against a computer opponent that looks 10 plies ahead. It is a plan and not a promise: the first three groups below are listed in order of priority, without dates or version numbers, and the order will change as the project learns what its users need most. The fourth group is work that goes along with the others.
+
+### Complete the rules of chess
+
+Castling, en passant and pawn promotion are described in the rules above, but the game and the computer player do not have them yet, and stalemate is the only way a game can end in a draw. The computer player searches with its own move generator (`ChessSearch.cpp`), so every rule has to be added to the game and to that search at the same time, with unit tests, to make sure that the computer never chooses a move that the game refuses.
+
+- **Castling**: king side and queen side, with all the conditions listed under Castling above.
+- **En passant**: the game remembers the double step of a pawn for the one move on which it can be captured this way.
+- **Pawn promotion**: to a queen, rook, bishop or knight, chosen by the player. A pawn that reaches the last rank now stays there and cannot move any more.
+- **Draws and resignation**: a dead position (such as king against king), threefold repetition and the fifty-move rule end the game in a draw, and a player can resign or offer a draw.
+- **Verification**: check the move generators against the published move counts (perft) of the standard test positions.
+
+### A complete game in the demo application
+
+The demo application plays a single game in which the computer always has the Black pieces, and it has to be restarted to play again. These features turn it into a program that can be used every day:
+
+- **New game and sides**: a command that starts a new game, the choice of playing White or Black, and a two-player mode without the computer.
+- **Reasons for refused moves**: tell the player in the status text why a move was refused (the piece cannot move that way, the way is blocked, the king would be in check, and so on). The game already knows the reason as an error code of `ChessErrHandler`, but nothing is shown now.
+- **Move list and take back**: the moves of the game in algebraic notation, and a command that takes a move back.
+- **Save and load**: positions as FEN records and games as PGN files, the formats that other chess programs read and write.
+- **Clocks**: chess clocks with the usual time controls, and a loss on time.
+- **A better board**: highlight the last move and all the squares to which the selected piece can move (the board frames only the selected square and the square under the mouse now), move the pieces by dragging them, play with the keyboard, and resize the window (its size is fixed now).
+- **Sounds and settings**: sounds for moves, captures and check (there is only a system beep now), and a settings dialog for the level of the computer, the sounds and the colors of the board.
+- **Translation**: move the texts of the application into the string table so that it can be translated.
+
+### A stronger and more flexible computer player
+
+The search of the computer player counts positions and never time, so a position always gets the same move on any computer. Every improvement keeps that, has to win against the previous version in matches played from varied openings with both colors, and must not make a move take longer than about one second in the Release build.
+
+- **Levels of difficulty**: the depth and the number of positions per move, which are fixed at 10 plies and 2,000,000 positions in `ComputerPlayer.cpp`, become settings that go from a beginner to the present strength.
+- **Opening book**: take the first moves from a small book of well-known openings instead of searching for them.
+- **Better evaluation**: terms that are missing now, such as passed pawns and the mobility of the pieces, with weights tuned in matches against the previous version.
+- **Search refinements**: static exchange evaluation for the order of the captures and further pruning, such as futility pruning, to look deeper with the same number of positions.
+- **Hints and analysis**: a command that suggests a move, and the score and the best line that the search finds shown while the computer thinks.
+
+### A reusable control, tests and documentation
+
+ChessCtrl is meant to be used by other applications, so the demo application should be only one of its users. This work goes along with the other groups:
+
+- **A control without the demo dialog**: `CChessCtrl` and `ChessBoard` write straight into a status text and a progress bar that the demo dialog gives them. Notifications sent to the parent window (a move was played, check, the game is over, the computer is thinking) would let any application show them in its own way, and would keep the rules free of any window.
+- **A small public interface**: set up a position, read the state of the game and choose which side the computer plays, described with Doxygen comments (the chess classes have none yet).
+- **Continuous integration**: a GitHub Actions workflow that builds the solution and runs `ChessUnittests` for every pull request. The tests are run by hand now.
+
+### Take part
+
+Every item on this roadmap is open to discussion and to contributions. Open an [issue](https://github.com/mihaimoga/ChessCtrl/issues) that names the item before you start working on it, so that the maintainers can talk it over with you; an issue that a maintainer approves gets the `Accepted` label. Ideas that are not on the list are welcome in the [Discussions](https://github.com/mihaimoga/ChessCtrl/discussions). When your work is ready, follow the steps in the next section to send your Pull Request.
+
 ## Create and Submit your Pull Request
 
 As noted in the [Contributing Rules](https://github.com/mihaimoga/ChessCtrl/blob/main/CONTRIBUTING.md) for _ChessCtrl_, all Pull Requests need to be attached to a issue on GitHub. So the first step is to create an issue which requests that the functionality be improved (if it was already there) or added (if it was not yet there); in your issue, be sure to explain that you have the functionality definition ready, and will be submitting a Pull Request. The second step is to use the GitHub interface to create the Pull Request from your fork into the main repository. The final step is to wait for and respond to feedback from the developers as needed, until such time as your PR is accepted or rejected.
