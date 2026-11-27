@@ -94,6 +94,15 @@
 								<li>Updated <code>AGENTS.md</code> and <code>README.md</code> with the new engine files, the search limits and the benchmark procedure.</li>
 							</ul>
 						</li>
+						<li>Version 1.05 (TBD):
+							<ul>
+								<li>Renamed the <code>ChessBench</code> project to <code>Benchmark</code> and moved it from the <code>ChessBench</code> folder to the <code>Benchmark</code> folder (<code>Benchmark.vcxproj</code>, <code>Benchmark.cpp</code> and <code>corpus.txt</code>). The program is now <code>Benchmark.exe</code>; its modes and the benchmark procedure are the same, and the <code>rules</code>, <code>search</code>, <code>thread</code> and <code>game</code> modes give the same hashes, moves and scores as before the rename.</li>
+								<li>Renamed the <code>ChessUnittests</code> project to <code>UnitTests</code> and moved it from the <code>ChessUnittests</code> folder to the <code>UnitTests</code> folder (<code>UnitTests.vcxproj</code>, <code>TestSupport.hpp</code> and the six test files). The tests are now built into <code>UnitTests.dll</code>, and their namespace is <code>UnitTests</code> instead of <code>ChessUnittests</code>, so the fully qualified names of the tests start with <code>UnitTests::</code> now. The 187 unit tests are unchanged and all of them pass in Debug and Release, for Win32 and x64.</li>
+								<li>The <code>Setup</code> installer project takes <code>Benchmark.exe</code> and <code>UnitTests.dll</code> from the renamed projects, instead of <code>ChessBench.exe</code> and <code>ChessUnittests.dll</code>.</li>
+								<li>Added a Roadmap for further development to the help page (<code>ChessCtrl.html</code>) and to <code>README.md</code>: the missing rules of chess, a complete game in the demo application, a stronger and more flexible computer player, and a reusable control with tests and documentation.</li>
+								<li>Updated <code>AGENTS.md</code>, <code>README.md</code> and <code>ChessCtrl.html</code> with the new project names; <code>AGENTS.md</code> also has the new folders, the installer project and the namespace of the tests.</li>
+							</ul>
+						</li>
 					</ul>
 				</div>
 			</div>

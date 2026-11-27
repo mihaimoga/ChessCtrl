@@ -1,4 +1,4 @@
-// ChessBench - standalone benchmark and equivalence harness for ComputerThreadProc (not part of the product).
+// Benchmark - standalone benchmark and equivalence harness for ComputerThreadProc (not part of the product).
 // It compiles the engine sources of the solution folder, or the ones of the SrcDir MSBuild property (for example
 // a "git archive" of an older commit, built with /p:SrcDir=<folder> /p:OutDir=<folder>\out\ /p:IntDir=<folder>\obj\),
 // so that two versions of the engine can be run on the same corpus and the lines they print compared.
@@ -586,11 +586,11 @@ namespace
 
 	void Usage()
 	{
-		fprintf(stderr, "usage: ChessBench gen <corpus> <games> <plies>\n"
-			"       ChessBench rules <corpus> <games> <fuzz>\n"
-			"       ChessBench search <corpus> <games> <fuzz> <budgetMs> <fuzzLevel2>\n"
-			"       ChessBench thread <corpus> <games> <reps>\n"
-			"       ChessBench game <games> <plies>\n");
+		fprintf(stderr, "usage: Benchmark gen <corpus> <games> <plies>\n"
+			"       Benchmark rules <corpus> <games> <fuzz>\n"
+			"       Benchmark search <corpus> <games> <fuzz> <budgetMs> <fuzzLevel2>\n"
+			"       Benchmark thread <corpus> <games> <reps>\n"
+			"       Benchmark game <games> <plies>\n");
 	}
 }
 

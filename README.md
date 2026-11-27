@@ -207,7 +207,7 @@ A player who touches a piece to adjust its physical position within a square mus
 
 ## Roadmap
 
-This roadmap shows where the development of _ChessCtrl_ goes after version 1.04, which plays games of chess against a computer opponent that looks 10 plies ahead. It is a plan and not a promise: the first three groups below are listed in order of priority, without dates or version numbers, and the order will change as the project learns what its users need most. The fourth group is work that goes along with the others.
+This roadmap shows where the development of _ChessCtrl_ goes after version 1.05, which plays games of chess against a computer opponent that looks 10 plies ahead. It is a plan and not a promise: the first three groups below are listed in order of priority, without dates or version numbers, and the order will change as the project learns what its users need most. The fourth group is work that goes along with the others.
 
 ### Complete the rules of chess
 
@@ -248,7 +248,7 @@ ChessCtrl is meant to be used by other applications, so the demo application sho
 
 - **A control without the demo dialog**: `CChessCtrl` and `ChessBoard` write straight into a status text and a progress bar that the demo dialog gives them. Notifications sent to the parent window (a move was played, check, the game is over, the computer is thinking) would let any application show them in its own way, and would keep the rules free of any window.
 - **A small public interface**: set up a position, read the state of the game and choose which side the computer plays, described with Doxygen comments (the chess classes have none yet).
-- **Continuous integration**: a GitHub Actions workflow that builds the solution and runs `ChessUnittests` for every pull request. The tests are run by hand now.
+- **Continuous integration**: a GitHub Actions workflow that builds the solution and runs `UnitTests` for every pull request. The tests are run by hand now.
 
 ### Take part
 

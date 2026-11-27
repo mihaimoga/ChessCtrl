@@ -5,7 +5,7 @@
 
 using namespace ChessTests;
 
-namespace ChessUnittests
+namespace UnitTests
 {
 	TEST_CLASS(PawnAdvanceTests)
 	{

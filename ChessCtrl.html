@@ -265,7 +265,7 @@
 
 					<h2 id="roadmap">Roadmap</h2>
 
-					<p>This roadmap shows where the development of <em>ChessCtrl</em> goes after version 1.04, which plays games of chess against a computer opponent that looks 10 plies ahead. It is a plan and not a promise: the first three groups below are listed in order of priority, without dates or version numbers, and the order will change as the project learns what its users need most. The fourth group is work that goes along with the others.</p>
+					<p>This roadmap shows where the development of <em>ChessCtrl</em> goes after version 1.05, which plays games of chess against a computer opponent that looks 10 plies ahead. It is a plan and not a promise: the first three groups below are listed in order of priority, without dates or version numbers, and the order will change as the project learns what its users need most. The fourth group is work that goes along with the others.</p>
 
 					<h3>Complete the rules of chess</h3>
 
@@ -309,7 +309,7 @@
 					<ul>
 						<li><strong>A control without the demo dialog</strong>: <code>CChessCtrl</code> and <code>ChessBoard</code> write straight into a status text and a progress bar that the demo dialog gives them. Notifications sent to the parent window (a move was played, check, the game is over, the computer is thinking) would let any application show them in its own way, and would keep the rules free of any window.</li>
 						<li><strong>A small public interface</strong>: set up a position, read the state of the game and choose which side the computer plays, described with Doxygen comments (the chess classes have none yet).</li>
-						<li><strong>Continuous integration</strong>: a GitHub Actions workflow that builds the solution and runs <code>ChessUnittests</code> for every pull request. The tests are run by hand now.</li>
+						<li><strong>Continuous integration</strong>: a GitHub Actions workflow that builds the solution and runs <code>UnitTests</code> for every pull request. The tests are run by hand now.</li>
 					</ul>
 
 					<h3>Take part</h3>

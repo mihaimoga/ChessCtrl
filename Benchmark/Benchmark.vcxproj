@@ -22,7 +22,7 @@
 	<VCProjectVersion>17.0</VCProjectVersion>
 	<ProjectGuid>{7D3B5E2A-4C61-4F0B-9A52-0C1D2E3F4A5B}</ProjectGuid>
 	<Keyword>MFCProj</Keyword>
-	<RootNamespace>ChessBench</RootNamespace>
+	<RootNamespace>Benchmark</RootNamespace>
 	<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
 	<SrcDir Condition="'$(SrcDir)'==''">$(MSBuildProjectDirectory)\..</SrcDir>
   </PropertyGroup>
@@ -171,7 +171,7 @@
 	<ClCompile Include="$(SrcDir)\Piece.cpp" />
 	<ClCompile Include="$(SrcDir)\Queen.cpp" />
 	<ClCompile Include="$(SrcDir)\Rook.cpp" />
-	<ClCompile Include="ChessBench.cpp" />
+	<ClCompile Include="Benchmark.cpp" />
   </ItemGroup>
   <ItemGroup>
 	<None Include="corpus.txt" />

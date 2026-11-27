@@ -198,7 +198,7 @@ namespace
 	}
 }
 
-namespace ChessUnittests
+namespace UnitTests
 {
 	TEST_CLASS(ComputerSearchTests)
 	{

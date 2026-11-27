@@ -1,4 +1,4 @@
-// TestSupport.hpp - helpers shared by the ChessUnittests test classes
+// TestSupport.hpp - helpers shared by the UnitTests test classes
 //
 // A position is written as the piece placement field of a FEN record: ranks 8 down to 1 separated by '/',
 // uppercase letters for White and lowercase letters for Black (P N B R Q K) and digits for runs of empty squares.
