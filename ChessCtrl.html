@@ -309,7 +309,7 @@
 					<ul>
 						<li><strong>A control without the demo dialog</strong>: <code>CChessCtrl</code> and <code>ChessBoard</code> write straight into a status text and a progress bar that the demo dialog gives them. Notifications sent to the parent window (a move was played, check, the game is over, the computer is thinking) would let any application show them in its own way, and would keep the rules free of any window.</li>
 						<li><strong>A small public interface</strong>: set up a position, read the state of the game and choose which side the computer plays, described with Doxygen comments (the chess classes have none yet).</li>
-						<li><strong>Continuous integration</strong>: a GitHub Actions workflow that builds the solution and runs <code>UnitTests</code> for every pull request. The tests are run by hand now.</li>
+						<li><strong>Continuous integration</strong>: a GitHub Actions workflow that builds the solution and runs <code>UnitTests</code> for every pull request. Building <code>UnitTests</code> runs the tests on the developer's computer now, but nothing runs them for a pull request.</li>
 					</ul>
 
 					<h3>Take part</h3>

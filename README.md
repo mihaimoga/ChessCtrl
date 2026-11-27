@@ -248,7 +248,7 @@ ChessCtrl is meant to be used by other applications, so the demo application sho
 
 - **A control without the demo dialog**: `CChessCtrl` and `ChessBoard` write straight into a status text and a progress bar that the demo dialog gives them. Notifications sent to the parent window (a move was played, check, the game is over, the computer is thinking) would let any application show them in its own way, and would keep the rules free of any window.
 - **A small public interface**: set up a position, read the state of the game and choose which side the computer plays, described with Doxygen comments (the chess classes have none yet).
-- **Continuous integration**: a GitHub Actions workflow that builds the solution and runs `UnitTests` for every pull request. The tests are run by hand now.
+- **Continuous integration**: a GitHub Actions workflow that builds the solution and runs `UnitTests` for every pull request. Building `UnitTests` runs the tests on the developer's computer now, but nothing runs them for a pull request.
 
 ### Take part
 
