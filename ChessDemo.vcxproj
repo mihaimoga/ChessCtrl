@@ -203,6 +203,7 @@
     <ClInclude Include="ChessErrHandler.hpp" />
     <ClInclude Include="ChessInfo.hpp" />
     <ClInclude Include="ChessSearch.hpp" />
+    <ClInclude Include="Confetti.h" />
     <ClInclude Include="EdgeWebBrowser.h" />
     <ClInclude Include="EmptyPiece.hpp" />
     <ClInclude Include="framework.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="ChessErrHandler.cpp" />
     <ClCompile Include="ChessSearch.cpp" />
     <ClCompile Include="ComputerPlayer.cpp" />
+    <ClCompile Include="Confetti.cpp" />
     <ClCompile Include="EdgeWebBrowser.cpp" />
     <ClCompile Include="EmptyPiece.cpp" />
     <ClCompile Include="HLinkCtrl.cpp" />

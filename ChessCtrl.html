@@ -53,7 +53,7 @@
 						<li><code>void makeGameInCheck()</code></li>
 						<li><code>void makeGameNotInCheck()</code></li>
 						<li><code>void beginAGame()</code></li>
-						<li><code>void endTheGame()</code></li>
+						<li><code>void endTheGame()</code>: ends the game, after a checkmate or a stalemate, and posts <code>MSG_GAME_ENDED</code> (<code>Messages.h</code>) to the chess control, which shows confetti on the screen (<code>ShowConfetti()</code> in <code>Confetti.cpp</code>). A board without a chess control, as in <code>Benchmark</code> and <code>UnitTests</code>, just ends the game.</li>
 						<li><code>void makeWhiteGoesNext()</code></li>
 						<li><code>bool gameCanContinue(wstring sourceFileRank, wstring destFileRank)</code>: checks if the game is not ended.</li>
 						<li><code>bool sourceAndDestIsValid(wstring sourceFileRank, wstring destFileRank)</code>: check if given source and dest's file and rank represenation is valid (wstring with 2 chars) and are within chess board.</li>

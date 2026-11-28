@@ -17,3 +17,5 @@ ChessCtrl. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*/
 
 static constexpr UINT MSG_NAVIGATE = WM_APP + 123;
 static constexpr UINT MSG_RUN_ASYNC_CALLBACK = WM_APP + 124;
+// Posted by ChessBoard to its control when the game ends
+static constexpr UINT MSG_GAME_ENDED = WM_APP + 125;

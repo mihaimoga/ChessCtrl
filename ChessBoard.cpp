@@ -3,6 +3,8 @@
 
 #include "pch.h"
 #include "ChessBoard.hpp"
+#include "ChessCtrl.h"
+#include "Messages.h"
 
 using namespace std;
 
@@ -157,6 +159,10 @@ void ChessBoard::beginAGame()
 void ChessBoard::endTheGame()
 {
 	_hasEnded = true;
+	// The computer player ends the game on its own thread, so the control is told with a message;
+	// without a control (benchmark, unit tests) nobody is told
+	if ((m_pParentWnd != nullptr) && ::IsWindow(m_pParentWnd->GetSafeHwnd()))
+		::PostMessage(m_pParentWnd->GetSafeHwnd(), MSG_GAME_ENDED, 0, 0);
 }
 
 void ChessBoard::makeWhiteGoesNext()

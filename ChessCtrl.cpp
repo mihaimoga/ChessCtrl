@@ -20,6 +20,8 @@ ChessCtrl. If not, see <http://www.opensource.org/licenses/gpl-3.0.html>*/
 #include "ChessDemo.h"
 #include "ChessCtrl.h"
 #include "memdc.h"
+#include "Messages.h"
+#include "Confetti.h"
 
 // CChessCtrl
 
@@ -86,6 +88,7 @@ BEGIN_MESSAGE_MAP(CChessCtrl, CStatic)
 	ON_WM_PAINT()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONDOWN()
+	ON_MESSAGE(MSG_GAME_ENDED, &CChessCtrl::OnGameEnded)
 END_MESSAGE_MAP()
 
 // CChessCtrl message handlers
@@ -421,6 +424,14 @@ void CChessCtrl::OnLButtonDown(UINT nFlags, CPoint point)
 	}
 
 	CStatic::OnLButtonDown(nFlags, point);
+}
+
+LRESULT CChessCtrl::OnGameEnded(WPARAM wParam, LPARAM lParam)
+{
+	UNREFERENCED_PARAMETER(wParam);
+	UNREFERENCED_PARAMETER(lParam);
+	ShowConfetti(this);
+	return 0;
 }
 
 bool CChessCtrl::IsValidMove()
